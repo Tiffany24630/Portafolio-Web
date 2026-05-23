@@ -1,5 +1,5 @@
 {
-  "name": "webportafolio",
+  "name": "portfolio-web",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -10,8 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "framer-motion": "^12.40.0",
     "react": "^19.2.6",
-    "react-dom": "^19.2.6"
+    "react-dom": "^19.2.6",
+    "tone": "^15.1.22"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
