@@ -1,8 +1,69 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  font-family: Inter, sans-serif;
+  background:
+    radial-gradient(
+      circle at top,
+      #14192b,
+      #050505 70%
+    );
+  color: white;
+}
+
+.scene {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  overflow: hidden;
+}
+
+.background-glow {
+  position: absolute;
+  width: 900px;
+  height: 900px;
+  background:
+    radial-gradient(
+      rgba(0,255,255,0.12),
+      transparent 70%
+    );
+  filter: blur(100px);
+  top: -300px;
+  pointer-events: none;
+}
+
+.top-ui {
+  position: absolute;
+  top: 40px;
+  text-align: center;
+  z-index: 100;
+}
+
+.top-ui h1 {
+  margin: 0;
+  font-size: 3rem;
+  letter-spacing: 10px;
+  font-weight: 900;
+}
+
+.top-ui p {
+  margin-top: 12px;
+  opacity: 0.6;
+  letter-spacing: 2px;
+}
+
 .piano-container {
   position: relative;
   width: 1260px;
   height: 320px;
-  margin-bottom: 40px;
+  margin-bottom: 80px;
 }
 
 .white-keys,
@@ -16,52 +77,55 @@
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  user-select: none;
   transition:
     transform 0.08s ease,
     box-shadow 0.08s ease;
+  user-select: none;
 }
 
 .white {
   height: 320px;
-  background: linear-gradient(
-    to bottom,
-    #ffffff,
-    #dcdcdc
-  );
+  background:
+    linear-gradient(
+      to bottom,
+      #ffffff,
+      #d6d6d6
+    );
   border: 2px solid #111;
-  border-radius: 0 0 12px 12px;
-  color: #111;
+  border-radius: 0 0 14px 14px;
   z-index: 1;
 }
 
 .black {
   height: 190px;
-  background: linear-gradient(
-    to bottom,
-    #2b2b2b,
-    #050505
-  );
-  border: 2px solid #000;
+  background:
+    linear-gradient(
+      to bottom,
+      #2f2f2f,
+      #050505
+    );
   border-radius: 0 0 10px 10px;
-  color: white;
   z-index: 5;
 }
 
 .key span {
   margin-bottom: 10px;
-  font-size: 11px;
-  font-weight: bold;
-  opacity: 0.7;
+  font-size: 10px;
+  opacity: 0.65;
 }
 
 .player {
   position: absolute;
-  width: 72px;
-  height: 72px;
+  width: 74px;
+  height: 74px;
   object-fit: contain;
   image-rendering: pixelated;
-  bottom: 340px;
   z-index: 20;
+  transition:
+    transform 0.05s linear;
   will-change: transform;
+  filter:
+    drop-shadow(
+      0 0 12px rgba(0,255,255,0.35)
+    );
 }
