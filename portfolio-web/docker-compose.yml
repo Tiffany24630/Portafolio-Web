@@ -1,0 +1,5 @@
+services:
+  portfolio:
+    build: .
+    ports:
+      - "5987:5987"

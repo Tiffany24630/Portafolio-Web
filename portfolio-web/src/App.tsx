@@ -1,122 +1,90 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useEffect, useState } from "react";
+import Player from "./components/Player";
+import Piano from "./components/Piano";
+import { useKeyboard } from "./hooks/useKeyboard";
+import { playNote } from "./audio/piano";
+import { pianoKeys } from "./data/pianoKeys";
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+function getPressedKey(playerX: number) {
+  return pianoKeys.find((key) => {
+    return (
+      playerX >= key.x &&
+      playerX <= key.x + key.width
+    );
+  });
 }
 
-export default App
+export default function App() {
+  const keys = useKeyboard();
+  const [x, setX] = useState(200);
+  const [y, setY] = useState(0);
+  const [velocityY, setVelocityY] = useState(0);
+  const [activeNote, setActiveNote] = useState<string | null>(null);
+  const [direction, setDirection] = useState<"left" | "right">("right");
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setX((prev) => {
+        let next = prev;
+
+        if (keys["ArrowRight"]) {
+          next += 8;
+          setDirection("right");
+        }
+
+        if (keys["ArrowLeft"]) {
+          next -= 8;
+          setDirection("left");
+        }
+
+        if (next < 0) next = 0;
+
+        if (next > 1180) next = 1180;
+
+        return next;
+      });
+      setVelocityY((prev) => prev + 1);
+
+      setY((prev) => {
+        const next = prev + velocityY;
+
+        if (next >= 0) {
+          setVelocityY(0);
+          
+          const pressedKey = getPressedKey(x + 36);
+
+          if (pressedKey) {
+            setActiveNote(pressedKey.note);
+            playNote(pressedKey.note);
+
+            setTimeout(() => {
+              setActiveNote(null);
+            }, 120);
+          }
+          return 0;
+        }
+        return next;
+      });
+
+      if (keys["Space"] && y === 0) {
+        setVelocityY(-20);
+      }
+    }, 16);
+    return () => clearInterval(interval);
+  }, [keys, velocityY, x, y]);
+
+  return (
+    <div className="scene">
+      <div className="score">
+        PLAY TO DISCOVER
+      </div>
+
+      <Player
+        x={x}
+        y={y}
+        direction={direction}
+      />
+      <Piano activeNote={activeNote} />
+    </div>
+  );
+}
