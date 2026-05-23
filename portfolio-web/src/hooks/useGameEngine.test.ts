@@ -70,7 +70,7 @@ describe('useGameEngine', () => {
     const mockOnUpdate = vi.fn();
     renderHook(() => useGameEngine(mockOnUpdate));
 
-¿    act(() => {
+    act(() => {
       vi.advanceTimersByTime(16);
     });
 
