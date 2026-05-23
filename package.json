@@ -1,0 +1,23 @@
+{
+  "name": "portafolio-web",
+  "version": "1.0.0",
+  "description": "portafolio",
+  "keywords": [
+    "repoPortafolioWeb"
+  ],
+  "homepage": "https://github.com/Tiffany24630/Portafolio-Web#readme",
+  "bugs": {
+    "url": "https://github.com/Tiffany24630/Portafolio-Web/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tiffany24630/Portafolio-Web.git"
+  },
+  "license": "ISC",
+  "author": "Tiffany_SalSua",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
