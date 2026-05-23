@@ -11,16 +11,19 @@ export default function Player({
   y,
   direction,
 }: Props) {
+
   return (
     <img
       src={playerImg}
-      className="player"
       alt="player"
+      className="player"
       style={{
-        transform: `
-          translate(${x}px, ${y}px)
-          scaleX(${direction === "left" ? -1 : 1})
-        `,
+        left: `${x}px`,
+        bottom: `${y}px`,
+        transform:
+          direction === "left"
+            ? "scaleX(-1)"
+            : "scaleX(1)",
       }}
     />
   );

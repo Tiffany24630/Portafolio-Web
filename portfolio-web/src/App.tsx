@@ -1,56 +1,148 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+
 import Player from "./components/Player";
 import Piano from "./components/Piano";
+
 import { useKeyboard } from "./hooks/useKeyboard";
+
 import { playNote } from "./audio/piano";
+
 import { pianoKeys } from "./data/pianoKeys";
 
-function getPressedKey(
-  playerX: number,
-  lane: "white" | "black"
-) {
-  return pianoKeys.find((key) => {
-    return (
-      key.type === lane &&
-      playerX >= key.x &&
-      playerX <= key.x + key.width
-    );
-  });
-}
+const PLAYER_WIDTH = 74;
 
 export default function App() {
-  const keys = useKeyboard();
-  const [x, setX] = useState(240);
-  const [jumpY, setJumpY] = useState(0);
-  const [velocityY, setVelocityY] = useState(0);
-  const [direction, setDirection] = useState<"left" | "right">("right");
-  const [activeNote, setActiveNote] = useState<string | null>(null);
-  const [lane, setLane] = useState<"white" | "black">("white");
-  const [isFalling, setIsFalling] = useState(false);
-  const [hasLanded, setHasLanded] = useState(false);
 
+  const keys = useKeyboard();
+
+  // referencia al piano real
+  const pianoRef =
+    useRef<HTMLDivElement>(null);
+
+  // ancho renderizado REAL
+  const [pianoWidth, setPianoWidth] =
+    useState(1260);
+
+  // posición relativa
+  const [xPercent, setXPercent] =
+    useState(0.05);
+
+  // salto
+  const [jumpY, setJumpY] =
+    useState(0);
+
+  const [velocityY, setVelocityY] =
+    useState(0);
+
+  // dirección
+  const [direction, setDirection] =
+    useState<"left" | "right">("right");
+
+  // lane
+  const [lane, setLane] =
+    useState<"white" | "black">(
+      "white"
+    );
+
+  // nota activa
+  const [activeNote, setActiveNote] =
+    useState<string | null>(null);
+
+  // detectar si estaba en el aire
+  const [wasInAir, setWasInAir] =
+    useState(false);
+
+  // detectar ancho real
   useEffect(() => {
+
+    const updateSize = () => {
+
+      if (pianoRef.current) {
+
+        setPianoWidth(
+          pianoRef.current.offsetWidth
+        );
+      }
+    };
+
+    updateSize();
+
+    window.addEventListener(
+      "resize",
+      updateSize
+    );
+
+    return () => {
+      window.removeEventListener(
+        "resize",
+        updateSize
+      );
+    };
+
+  }, []);
+
+  // obtener tecla actual
+  function getPressedKey() {
+
+    const playerX =
+      xPercent * pianoWidth;
+
+    return pianoKeys.find((key) => {
+
+      const keyStart =
+        (key.x / 1260) * pianoWidth;
+
+      const keyEnd =
+        ((key.x + key.width) / 1260) *
+        pianoWidth;
+
+      return (
+        key.type === lane &&
+        playerX + PLAYER_WIDTH / 2 >=
+          keyStart &&
+        playerX + PLAYER_WIDTH / 2 <=
+          keyEnd
+      );
+    });
+  }
+
+  // GAME LOOP
+  useEffect(() => {
+
     const interval = setInterval(() => {
-      setX((prev) => {
+
+      // movimiento horizontal
+      setXPercent((prev) => {
+
         let next = prev;
 
         if (keys["ArrowRight"]) {
-          next += 7;
+
+          next += 0.006;
+
           setDirection("right");
         }
 
         if (keys["ArrowLeft"]) {
-          next -= 7;
+
+          next -= 0.006;
+
           setDirection("left");
         }
 
+        // límites responsive
         if (next < 0) next = 0;
 
-        if (next > 1180) next = 1180;
+        if (next > 0.94) next = 0.94;
 
         return next;
       });
 
+      // cambiar lane
       if (keys["ArrowUp"]) {
         setLane("black");
       }
@@ -59,27 +151,26 @@ export default function App() {
         setLane("white");
       }
 
+      // gravedad
       setVelocityY((prev) => prev + 1);
 
-      if (velocityY > 0) {
-        setIsFalling(true);
-      }
-
+      // salto
       setJumpY((prev) => {
-        const next = prev + velocityY;
 
-        if (next >= 0) {
-          if (
-            isFalling &&
-            !hasLanded
-          ) {
+        const next =
+          prev - velocityY;
+
+        // aterrizaje
+        if (next <= 0) {
+
+          // SOLO si cayó desde salto
+          if (wasInAir) {
+
             const pressedKey =
-              getPressedKey(
-                x + 36,
-                lane
-              );
+              getPressedKey();
 
             if (pressedKey) {
+
               setActiveNote(
                 pressedKey.note
               );
@@ -90,65 +181,100 @@ export default function App() {
 
               setTimeout(() => {
                 setActiveNote(null);
-              }, 120);
+              }, 70);
             }
-            setHasLanded(true);
           }
+
           setVelocityY(0);
-          setIsFalling(false);
-          
+
+          setWasInAir(false);
+
           return 0;
         }
+
         return next;
       });
 
+      // iniciar salto
       if (
         keys["Space"] &&
-        jumpY === 0
+        jumpY === 0 &&
+        !wasInAir
       ) {
+
         setVelocityY(-22);
-        setHasLanded(false);
+
+        setWasInAir(true);
       }
+
     }, 16);
-    return () => clearInterval(interval);
+
+    return () =>
+      clearInterval(interval);
+
   }, [
     keys,
     velocityY,
     jumpY,
-    x,
+    wasInAir,
     lane,
-    isFalling,
-    hasLanded,
+    pianoWidth,
   ]);
+
+  // posición real player
+  const playerX =
+    xPercent * pianoWidth;
+
+  // alturas base
+  const WHITE_Y = 235;
+
+  const BLACK_Y = 360;
 
   return (
     <div className="scene">
+
       <div className="background-glow" />
-      <div className="particles" />
+
+      {/* UI */}
 
       <div className="top-ui">
+
         <h1>
           PLAY TO DISCOVER
         </h1>
 
         <p>
           ↑ Black Keys
-          &nbsp;&nbsp;↓ White Keys
-          &nbsp;&nbsp;SPACE Jump
+          &nbsp;&nbsp;
+          ↓ White Keys
+          &nbsp;&nbsp;
+          SPACE Jump
         </p>
+
       </div>
-      <Player
-        x={x}
-        y={
-          lane === "black"
-            ? jumpY - 130
-            : jumpY
-        }
-        direction={direction}
-      />
-      <Piano
-        activeNote={activeNote}
-      />
+
+      {/* CONTENEDOR */}
+
+      <div
+        className="game-area"
+        ref={pianoRef}
+      >
+
+        {/* PLAYER */}
+
+        <Player
+          x={playerX}
+          y={
+            lane === "black"
+              ? BLACK_Y + jumpY
+              : WHITE_Y + jumpY
+          }
+          direction={direction}
+        />  
+        <Piano
+          activeNote={activeNote}
+        />
+      </div>
     </div>
   );
 }

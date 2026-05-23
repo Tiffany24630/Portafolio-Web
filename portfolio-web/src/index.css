@@ -2,6 +2,14 @@
   box-sizing: border-box;
 }
 
+.game-area {
+  position: relative;
+  width: min(1260px, 92vw);
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
 body {
   margin: 0;
   overflow: hidden;
@@ -121,9 +129,15 @@ body {
   object-fit: contain;
   image-rendering: pixelated;
   z-index: 20;
+  pointer-events: none;
   transition:
-    transform 0.05s linear;
-  will-change: transform;
+    left 0.04s linear,
+    bottom 0.04s linear,
+    transform 0.04s linear;
+  will-change:
+    left,
+    bottom,
+    transform;
   filter:
     drop-shadow(
       0 0 12px rgba(0,255,255,0.35)
