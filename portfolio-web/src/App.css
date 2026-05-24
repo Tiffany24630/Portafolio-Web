@@ -163,13 +163,13 @@ body {
 .sidebar-menu {
   display: flex;
   flex-direction: column;
-  gap: 22px;
-  margin-top: 28px;
+  gap: 14px;
+  margin-top: 24px;
 }
 
 .sidebar-button {
   width: 100%;
-  min-height: 75px;
+  min-height: 82px;
   padding: 0 14px 0 18px;
   display: grid;
   grid-template-columns: 32px 1fr 18px;
@@ -189,6 +189,26 @@ body {
     border-color 180ms ease,
     background 180ms ease,
     color 180ms ease;
+}
+
+.mission-copy {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.mission-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mission-sequence {
+  color: rgba(187, 226, 241, 0.62);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
 }
 
 .sidebar-button:hover:not(:disabled) {
@@ -301,6 +321,30 @@ body {
   border-radius: 3px 0 0;
 }
 
+.nav-icon.contact::before {
+  position: absolute;
+  left: 2px;
+  top: 7px;
+  width: 26px;
+  height: 17px;
+  content: "";
+  border: 2px solid currentColor;
+  border-radius: 3px;
+}
+
+.nav-icon.contact::after {
+  position: absolute;
+  left: 6px;
+  top: 9px;
+  width: 18px;
+  height: 18px;
+  content: "";
+  border-left: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);
+  transform-origin: center;
+}
+
 .nav-icon.gear::before {
   position: absolute;
   inset: -2px 0 0;
@@ -347,7 +391,7 @@ body {
 
 .top-ui {
   position: absolute;
-  top: 78px;
+  top: 64px;
   left: 0;
   right: 0;
 }
@@ -369,7 +413,7 @@ body {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 10px 26px;
+  gap: 10px 22px;
   color: #f5fbff;
   font-size: 18px;
   line-height: 1.2;
@@ -382,10 +426,14 @@ body {
 }
 
 .sheet-wrapper {
-  width: min(1276px, 100%);
-  height: 214px;
-  margin-top: 58px;
-  padding: 28px 30px;
+  width: min(1120px, 100%);
+  height: 226px;
+  margin: 44px auto 0;
+  padding: 24px 30px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(47, 252, 255, 0.72) rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(166, 206, 231, 0.55);
   border-radius: 9px;
   background:
@@ -397,10 +445,24 @@ body {
   backdrop-filter: blur(10px);
 }
 
+.sheet-wrapper::-webkit-scrollbar {
+  height: 9px;
+}
+
+.sheet-wrapper::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.sheet-wrapper::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(47, 252, 255, 0.68);
+}
+
 .sheet-music {
   position: relative;
-  height: 100%;
-  overflow: hidden;
+  min-width: 100%;
+  height: 178px;
 }
 
 .staff-line {
@@ -415,19 +477,19 @@ body {
 .treble-clef {
   position: absolute;
   left: 0;
-  top: -18px;
+  top: 94px;
   width: 78px;
   color: rgba(255, 255, 255, 0.96);
   font-family: "Times New Roman", serif;
-  font-size: 104px;
-  line-height: 1;
+  font-size: 112px;
+  line-height: 0.84;
+  transform: translateY(-50%);
   text-shadow: 0 0 16px rgba(255, 255, 255, 0.34);
 }
 
 .measure-bar {
   position: absolute;
   top: 46px;
-  left: 111px;
   width: 1px;
   height: 97px;
   background: rgba(238, 245, 255, 0.82);
@@ -436,15 +498,15 @@ body {
 .music-note {
   position: absolute;
   z-index: 2;
-  width: 24px;
-  height: 64px;
+  width: 58px;
+  height: 88px;
   filter: drop-shadow(0 0 10px rgba(47, 252, 255, 0.5));
 }
 
 .note-head {
   position: absolute;
-  left: 0;
-  bottom: 0;
+  left: 22px;
+  top: 32px;
   width: 20px;
   height: 15px;
   border-radius: 50%;
@@ -454,12 +516,38 @@ body {
 
 .note-stick {
   position: absolute;
-  left: 16px;
-  bottom: 8px;
+  left: 39px;
+  top: -10px;
   width: 3px;
   height: 52px;
   border-radius: 99px;
   background: #f8fbff;
+}
+
+.stem-down .note-stick {
+  left: 23px;
+  top: 39px;
+}
+
+.accidental {
+  position: absolute;
+  left: 2px;
+  top: 18px;
+  color: #f8fbff;
+  font-family: "Times New Roman", serif;
+  font-size: 34px;
+  line-height: 1;
+  text-shadow: 0 0 10px rgba(47, 252, 255, 0.38);
+}
+
+.ledger-line {
+  position: absolute;
+  left: 12px;
+  width: 42px;
+  height: 2px;
+  border-radius: 99px;
+  background: rgba(248, 251, 255, 0.9);
+  transform: translateY(-50%);
 }
 
 .game-area {
@@ -682,6 +770,21 @@ body {
     0 0 36px rgba(47, 252, 255, 0.14);
 }
 
+.portfolio-card {
+  width: min(760px, 100%);
+  padding: 42px;
+}
+
+.card-kicker {
+  display: inline-flex;
+  margin-bottom: 12px;
+  color: #27f8ff;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+}
+
 .modal-card h2 {
   margin: 0 48px 18px 0;
   font-size: 32px;
@@ -692,6 +795,57 @@ body {
   margin: 12px 0 0;
   color: rgba(244, 251, 255, 0.82);
   line-height: 1.7;
+}
+
+.melody-badge {
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 22px;
+  padding: 10px 14px;
+  overflow-wrap: anywhere;
+  color: #dffcff;
+  border: 1px solid rgba(47, 252, 255, 0.28);
+  border-radius: 8px;
+  background: rgba(18, 65, 78, 0.52);
+  font-weight: 800;
+}
+
+.portfolio-grid {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.portfolio-chip {
+  min-height: 58px;
+  padding: 13px 14px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: rgba(244, 251, 255, 0.88);
+  border: 1px solid rgba(148, 178, 203, 0.18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.social-links {
+  margin-top: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.social-links a {
+  min-width: 118px;
+  padding: 12px 16px;
+  color: #031017;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 8px;
+  background: #27f8ff;
+  font-weight: 900;
+  box-shadow: 0 0 22px rgba(39, 248, 255, 0.2);
 }
 
 .close-button {
@@ -731,7 +885,7 @@ body {
   }
 
   .sheet-wrapper {
-    height: 196px;
+    height: 222px;
     margin-top: 42px;
   }
 
@@ -754,25 +908,25 @@ body {
   }
 
   .sheet-wrapper {
-    height: 172px;
+    height: 214px;
     margin-top: 26px;
-    padding: 22px 20px;
+    padding: 18px 20px;
   }
 
   .staff-line {
-    left: 86px;
+    left: 112px;
   }
 
   .treble-clef {
-    font-size: 84px;
+    font-size: 104px;
   }
 
   .measure-bar {
-    left: 86px;
+    top: 46px;
   }
 
   .music-note {
-    transform: scale(0.86);
+    width: 58px;
   }
 
   .game-area {
@@ -797,7 +951,8 @@ body {
   }
 
   .sheet-wrapper {
-    height: 150px;
+    height: 210px;
+    padding: 16px;
   }
 
   .game-area {

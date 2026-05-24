@@ -5,7 +5,7 @@ import "./App.css";
 import Player from "./components/Player";
 import Piano from "./components/Piano";
 
-import { playNote } from "./audio/piano";
+import { playMelody, playNote } from "./audio/piano";
 import { pianoKeys } from "./data/pianoKeys";
 import { useKeyboard } from "./hooks/useKeyboard";
 
@@ -15,8 +15,17 @@ const JUMP_FORCE = 18;
 const GRAVITY = 0.9;
 const PIANO_SOURCE_WIDTH = 1260;
 const PIANO_SOURCE_HEIGHT = 260;
+const STAFF_TOP = 46;
+const STAFF_LINE_GAP = 24;
+const STAFF_STEP = STAFF_LINE_GAP / 2;
+const STAFF_BOTTOM = STAFF_TOP + STAFF_LINE_GAP * 4;
+const NOTE_HEAD_CENTER = 40;
+const NOTE_START_X = 166;
+const NOTE_SPACING = 72;
+const MEASURE_START_X = 112;
+const SHEET_MIN_WIDTH = 1120;
 
-type SectionName = "Sobre mi" | "Skills" | "Proyectos";
+type SectionName = "Sobre mi" | "Skills" | "Proyectos" | "Contacto";
 
 interface PlayedNote {
   id: number;
@@ -33,43 +42,64 @@ interface Particle {
 interface DiscoveryPattern {
   name: SectionName;
   sequence: string[];
-  icon: "profile" | "star" | "folder";
+  icon: "profile" | "star" | "folder" | "contact";
 }
 
-const NOTE_TO_STAFF: Record<string, number> = {
-  C4: 128,
-  Db4: 123,
-  D4: 118,
-  Eb4: 113,
-  E4: 108,
-  F4: 103,
-  Gb4: 98,
-  G4: 93,
-  Ab4: 88,
-  A4: 83,
-  Bb4: 78,
-  B4: 73,
-  C5: 68,
-  Db5: 63,
-  D5: 58,
-  Eb5: 53,
-  E5: 48,
-  F5: 43,
-  Gb5: 38,
-  G5: 33,
-  Ab5: 28,
-  A5: 23,
-  Bb5: 18,
-  B5: 13,
+interface SectionContent {
+  lead: string;
+  highlights: string[];
+  links?: {
+    label: string;
+    href: string;
+  }[];
+}
+
+interface StaffNote {
+  y: number;
+  hasFlat: boolean;
+  stemDown: boolean;
+  ledgerLines: number[];
+}
+
+const LETTER_INDEX: Record<string, number> = {
+  C: 0,
+  D: 1,
+  E: 2,
+  F: 3,
+  G: 4,
+  A: 5,
+  B: 6,
 };
 
-const PORTFOLIO_CONTENT: Record<SectionName, string> = {
-  "Sobre mi":
-    "Desarrollador enfocado en crear experiencias interactivas mezclando videojuegos, musica y diseno frontend.",
-  Skills:
-    "React, TypeScript, Docker, animaciones, UX/UI, audio interactivo y construccion de interfaces modernas.",
-  Proyectos:
-    "Videojuegos musicales, sistemas interactivos, aplicaciones frontend y mundos pequenos con animaciones.",
+const MIDDLE_LINE_Y =
+  STAFF_BOTTOM - (LETTER_INDEX.B - LETTER_INDEX.E) * STAFF_STEP;
+
+const PORTFOLIO_CONTENT: Record<SectionName, SectionContent> = {
+  "Sobre mi": {
+    lead:
+      "Desarrollador enfocado en crear experiencias interactivas mezclando videojuegos, musica y diseno frontend.",
+    highlights: ["UI interactiva", "Audio reactivo", "Experiencias web cinematicas"],
+  },
+  Skills: {
+    lead:
+      "Trabajo con herramientas modernas para construir interfaces fluidas, tipadas y faciles de mantener.",
+    highlights: ["React", "TypeScript", "Docker", "Framer Motion", "Tone.js", "UX/UI"],
+  },
+  Proyectos: {
+    lead:
+      "Proyectos orientados a interaccion, animacion y pequenos mundos web con personalidad propia.",
+    highlights: ["Videojuegos musicales", "Portafolios experimentales", "Sistemas frontend"],
+  },
+  Contacto: {
+    lead:
+      "Espacio para conectar el portafolio con tus redes, correo y perfiles profesionales.",
+    highlights: ["Disponible para colaborar", "Frontend creativo", "Experiencias interactivas"],
+    links: [
+      { label: "GitHub", href: "https://github.com/" },
+      { label: "LinkedIn", href: "https://www.linkedin.com/" },
+      { label: "Email", href: "mailto:tucorreo@example.com" },
+    ],
+  },
 };
 
 const DISCOVERY_PATTERNS: DiscoveryPattern[] = [
@@ -88,11 +118,47 @@ const DISCOVERY_PATTERNS: DiscoveryPattern[] = [
     sequence: ["C4", "D4", "G4", "A4"],
     icon: "folder",
   },
+  {
+    name: "Contacto",
+    sequence: ["F4", "G4", "E4"],
+    icon: "contact",
+  },
 ];
+
+function formatSequence(sequence: string[]) {
+  return sequence.join(" - ");
+}
+
+function getStaffNote(note: string): StaffNote {
+  const match = /^([A-G])(b?)(\d)$/.exec(note);
+  const letter = match?.[1] ?? "C";
+  const hasFlat = match?.[2] === "b";
+  const octave = Number(match?.[3] ?? 4);
+  const diatonicIndex = LETTER_INDEX[letter] + (octave - 4) * 7;
+  const e4Index = LETTER_INDEX.E;
+  const y = STAFF_BOTTOM - (diatonicIndex - e4Index) * STAFF_STEP;
+  const ledgerLines: number[] = [];
+
+  for (let lineY = STAFF_BOTTOM + STAFF_LINE_GAP; y >= lineY; lineY += STAFF_LINE_GAP) {
+    ledgerLines.push(lineY);
+  }
+
+  for (let lineY = STAFF_TOP - STAFF_LINE_GAP; y <= lineY; lineY -= STAFF_LINE_GAP) {
+    ledgerLines.push(lineY);
+  }
+
+  return {
+    y,
+    hasFlat,
+    stemDown: y <= MIDDLE_LINE_Y,
+    ledgerLines,
+  };
+}
 
 export default function App() {
   const keys = useKeyboard();
   const stageRef = useRef<HTMLDivElement>(null);
+  const sheetScrollRef = useRef<HTMLDivElement>(null);
   const hasCenteredPlayer = useRef(false);
   const noteIdRef = useRef(0);
 
@@ -118,9 +184,21 @@ export default function App() {
 
   const pianoHeight = (stageSize.width / PIANO_SOURCE_WIDTH) * PIANO_SOURCE_HEIGHT;
   const whiteLaneY = pianoHeight - 8;
-  const blackLaneY = pianoHeight + 34;
+  const blackLaneY = pianoHeight - 16;
   const baseLaneY = lane === "black" ? blackLaneY : whiteLaneY;
   const playerY = baseLaneY + velocityY * 4;
+  const sheetContentWidth = Math.max(
+    SHEET_MIN_WIDTH,
+    NOTE_START_X + playedNotes.length * NOTE_SPACING + 120
+  );
+  const measureCount = Math.max(
+    1,
+    Math.ceil((sheetContentWidth - MEASURE_START_X) / (NOTE_SPACING * 4))
+  );
+  const openedContent = openedSection ? PORTFOLIO_CONTENT[openedSection] : null;
+  const openedPattern = openedSection
+    ? DISCOVERY_PATTERNS.find((pattern) => pattern.name === openedSection)
+    : null;
 
   useEffect(() => {
     const updateSize = () => {
@@ -149,6 +227,16 @@ export default function App() {
       window.removeEventListener("resize", updateSize);
     };
   }, []);
+
+  useEffect(() => {
+    const sheet = sheetScrollRef.current;
+    if (!sheet) return;
+
+    sheet.scrollTo({
+      left: sheet.scrollWidth,
+      behavior: "smooth",
+    });
+  }, [playedNotes.length]);
 
   const rainDrops = useMemo(
     () =>
@@ -235,6 +323,16 @@ export default function App() {
     });
   }, [playedNotes]);
 
+  const reviewMelody = useCallback(() => {
+    const sequence = playedNotes.map((note) => note.note);
+
+    if (audioEnabled && sequence.length > 0) {
+      void playMelody(sequence);
+    }
+
+    checkMelody();
+  }, [audioEnabled, checkMelody, playedNotes]);
+
   const deleteLastNote = useCallback(() => {
     setPlayedNotes((prev) => prev.slice(0, -1));
   }, []);
@@ -315,11 +413,11 @@ export default function App() {
         event.preventDefault();
       }
 
-      if (event.code === "Enter") {
-        checkMelody();
+      if (event.code === "Enter" && !event.repeat) {
+        reviewMelody();
       }
 
-      if (event.code === "Backspace" || event.code === "Delete") {
+      if ((event.code === "Backspace" || event.code === "Delete") && !event.repeat) {
         deleteLastNote();
       }
     };
@@ -329,7 +427,7 @@ export default function App() {
     return () => {
       window.removeEventListener("keydown", keyDown);
     };
-  }, [checkMelody, deleteLastNote]);
+  }, [deleteLastNote, reviewMelody]);
 
   return (
     <div className="scene">
@@ -384,12 +482,11 @@ export default function App() {
                 onClick={() => setOpenedSection(item.name)}
               >
                 <span className={`nav-icon ${item.icon}`} aria-hidden="true" />
-                <span>{item.name}</span>
-                {!unlocked && (
-                  <span className="lock-icon" aria-hidden="true">
-                    &#128274;
-                  </span>
-                )}
+                <span className="mission-copy">
+                  <span className="mission-title">{item.name}</span>
+                  <span className="mission-sequence">{formatSequence(item.sequence)}</span>
+                </span>
+                {!unlocked && <span className="lock-icon" aria-hidden="true" />}
               </button>
             );
           })}
@@ -399,7 +496,9 @@ export default function App() {
 
         <button className="sidebar-button settings" onClick={() => setShowSettings(true)}>
           <span className="nav-icon gear" aria-hidden="true" />
-          <span>Configuracion</span>
+          <span className="mission-copy">
+            <span className="mission-title">Configuracion</span>
+          </span>
         </button>
       </aside>
 
@@ -411,43 +510,79 @@ export default function App() {
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <span>&larr; &rarr;</span> Move
+            <span>&uarr; &darr;</span> Black / White
             <span>SPACE</span> Jump
             <span>ENTER</span> Check Melody
           </motion.p>
 
-          <div className="sheet-wrapper">
-            <div className="sheet-music">
+          <div className="sheet-wrapper" ref={sheetScrollRef}>
+            <div
+              className="sheet-music"
+              style={{
+                width: `${sheetContentWidth}px`,
+              }}
+            >
               <div className="treble-clef" aria-hidden="true">
                 &#119070;
               </div>
 
-              <div className="measure-bar" />
+              {Array.from({ length: measureCount }).map((_, index) => (
+                <div
+                  key={index}
+                  className="measure-bar"
+                  style={{
+                    left: `${MEASURE_START_X + index * NOTE_SPACING * 4}px`,
+                  }}
+                />
+              ))}
 
               {[0, 1, 2, 3, 4].map((line) => (
                 <div
                   key={line}
                   className="staff-line"
                   style={{
-                    top: `${46 + line * 24}px`,
+                    top: `${STAFF_TOP + line * STAFF_LINE_GAP}px`,
                   }}
                 />
               ))}
 
-              {playedNotes.map((note, index) => (
-                <motion.div
-                  key={note.id}
-                  className="music-note"
-                  initial={{ opacity: 0, scale: 0, y: 8 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  style={{
-                    left: `${150 + (index % 18) * 56}px`,
-                    top: `${NOTE_TO_STAFF[note.note] ?? 90}px`,
-                  }}
-                >
-                  <div className="note-head" />
-                  <div className="note-stick" />
-                </motion.div>
-              ))}
+              {playedNotes.map((note, index) => {
+                const staffNote = getStaffNote(note.note);
+                const left = NOTE_START_X + index * NOTE_SPACING;
+
+                return (
+                  <motion.div
+                    key={note.id}
+                    className={`music-note ${staffNote.stemDown ? "stem-down" : "stem-up"}`}
+                    initial={{ opacity: 0, scale: 0, y: 8 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    style={{
+                      left: `${left}px`,
+                      top: `${staffNote.y - NOTE_HEAD_CENTER}px`,
+                    }}
+                    aria-label={note.note}
+                  >
+                    {staffNote.hasFlat && (
+                      <span className="accidental" aria-hidden="true">
+                        &flat;
+                      </span>
+                    )}
+
+                    {staffNote.ledgerLines.map((lineY) => (
+                      <span
+                        key={lineY}
+                        className="ledger-line"
+                        style={{
+                          top: `${lineY - staffNote.y + NOTE_HEAD_CENTER}px`,
+                        }}
+                      />
+                    ))}
+
+                    <div className="note-head" />
+                    <div className="note-stick" />
+                  </motion.div>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -484,7 +619,7 @@ export default function App() {
       </main>
 
       <AnimatePresence>
-        {openedSection && (
+        {openedSection && openedContent && openedPattern && (
           <motion.div
             className="modal-overlay"
             initial={{ opacity: 0 }}
@@ -492,7 +627,7 @@ export default function App() {
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="modal-card"
+              className="modal-card portfolio-card"
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
@@ -500,8 +635,29 @@ export default function App() {
               <button className="close-button" onClick={() => setOpenedSection(null)}>
                 &times;
               </button>
+              <span className="card-kicker">Mision desbloqueada</span>
               <h2>{openedSection}</h2>
-              <p>{PORTFOLIO_CONTENT[openedSection]}</p>
+              <p>{openedContent.lead}</p>
+
+              <div className="melody-badge">Melodia: {formatSequence(openedPattern.sequence)}</div>
+
+              <div className="portfolio-grid">
+                {openedContent.highlights.map((item) => (
+                  <span key={item} className="portfolio-chip">
+                    {item}
+                  </span>
+                ))}
+              </div>
+
+              {openedContent.links && (
+                <div className="social-links">
+                  {openedContent.links.map((link) => (
+                    <a key={link.label} href={link.href} target="_blank" rel="noreferrer">
+                      {link.label}
+                    </a>
+                  ))}
+                </div>
+              )}
             </motion.div>
           </motion.div>
         )}
@@ -526,8 +682,9 @@ export default function App() {
               </button>
               <h2>Configuracion</h2>
               <p>&larr; &rarr; Movimiento</p>
+              <p>&uarr; &darr; Cambiar entre teclas negras y blancas</p>
               <p>SPACE Saltar</p>
-              <p>ENTER Revisar melodia</p>
+              <p>ENTER Revisar y reproducir melodia</p>
               <p>DELETE Eliminar ultima nota</p>
 
               <button className="toggle-button" onClick={() => setRainEnabled((prev) => !prev)}>

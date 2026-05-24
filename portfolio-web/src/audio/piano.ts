@@ -39,3 +39,23 @@ export async function playNote(
     "64n"
   );
 }
+
+export async function playMelody(
+  notes: string[]
+) {
+  if (!audioEnabled || notes.length === 0) {
+    return;
+  }
+
+  await Tone.start();
+
+  const now = Tone.now();
+
+  notes.forEach((note, index) => {
+    synth.triggerAttackRelease(
+      note,
+      "8n",
+      now + index * 0.24
+    );
+  });
+}
