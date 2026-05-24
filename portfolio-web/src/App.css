@@ -1,72 +1,26 @@
-.piano-container {
-  position: relative;
-  width: 1260px;
-  height: 320px;
-  margin-bottom: 50px;
+* {
+  box-sizing: border-box;
 }
 
-.key {
-  position: absolute;
-  border-radius: 0 0 10px 10px;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-  font-size: 12px;
-  font-weight: bold;
-  user-select: none;
-}
-
-.white {
-  height: 320px;
-  background: #f4f4f4;
-  border: 2px solid #222;
-  color: black;
-  z-index: 1;
-}
-
-.black {
-  height: 200px;
-  background: #111;
-  border: 2px solid #000;
-  color: white;
-  z-index: 2;
-}
-
-.key span {
-  margin-bottom: 10px;
-}
-
-.player {
-  position: absolute;
-  width: 74px;
-  height: 74px;
-  object-fit: contain;
-  image-rendering: pixelated;
-  z-index: 20;
-  transition:
-    left 0.05s linear,
-    bottom 0.05s linear,
-    transform 0.05s linear;
-  will-change:
-    left,
-    bottom,
-    transform;
-  filter:
-    drop-shadow(
-      0 0 12px rgba(0,255,255,0.35)
-    );
+body {
+  margin: 0;
+  overflow: hidden;
+  font-family:
+    Inter,
+    sans-serif;
+  background: #020617;
 }
 
 .scene {
+  position: relative;
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  position: relative;
   background:
     radial-gradient(
       circle at top,
-      #182848,
-      #090909
+      #163047 0%,
+      #020617 65%
     );
 }
 
@@ -79,64 +33,133 @@
       rgba(0,255,255,0.12),
       transparent 70%
     );
+  pointer-events: none;
+}
+
+.dream-overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.02),
+      transparent
+    );
+  pointer-events: none;
+}
+
+.rain-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.rain-drop {
+  position: absolute;
+  top: -120px;
+  width: 1px;
+  height: 140px;
+  background:
+    linear-gradient(
+      transparent,
+      rgba(255,255,255,0.5)
+    );
+  animation:
+    rainFall linear infinite;
+}
+
+@keyframes rainFall {
+  to {
+    transform:
+      translateY(120vh);
+  }
 }
 
 .top-ui {
   position: absolute;
-  top: 20px;
+  top: 0;
+  left: 0;
   width: 100%;
-  z-index: 50;
+  z-index: 100;
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-top: 40px;
 }
 
 .top-ui h1 {
+  margin: 0;
   color: white;
-  letter-spacing: 8px;
+  font-size: 6rem;
+  font-weight: 900;
+  letter-spacing: 10px;
+  text-shadow:
+    0 0 30px rgba(255,255,255,0.4);
 }
 
 .top-ui p {
-  color: rgba(255,255,255,0.7);
+  margin-top: 20px;
+  color:
+    rgba(255,255,255,0.55);
+  letter-spacing: 6px;
+  font-size: 1rem;
+}
+
+.settings-button {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  width: 54px;
+  height: 54px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  background:
+    rgba(255,255,255,0.12);
+  color: white;
+  font-size: 1.5rem;
+  backdrop-filter: blur(10px);
+  z-index: 200;
 }
 
 .sheet-wrapper {
-  margin-top: 20px;
-  width: 90%;
-  overflow: hidden;
+  width: 900px;
+  margin-top: 35px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-radius: 24px;
+  background:
+    rgba(255,255,255,0.08);
+  backdrop-filter: blur(14px);
+  padding: 20px;
 }
 
 .sheet-scroll {
   overflow-x: auto;
-  overflow-y: hidden;
-  padding-bottom: 10px;
 }
 
 .sheet-music {
   position: relative;
-  width: max-content;
-  min-width: 100%;
+  width: 2200px;
   height: 180px;
-  background:
-    rgba(255,255,255,0.08);
-  border-radius: 20px;
-  backdrop-filter: blur(10px);
 }
 
 .staff-line {
   position: absolute;
-  width: 100%;
+  left: 120px;
+  width: calc(100% - 140px);
   height: 2px;
   background:
-    rgba(255,255,255,0.5);
+    rgba(255,255,255,0.45);
 }
 
 .treble-clef {
   position: absolute;
-  left: 30px;
-  top: 10px;
-  font-size: 110px;
+  left: 25px;
+  top: -10px;
+  font-size: 8rem;
   color: white;
+  line-height: 1;
 }
 
 .music-note {
@@ -152,27 +175,123 @@
 
 .note-stick {
   position: absolute;
-  left: 15px;
-  bottom: 4px;
   width: 3px;
-  height: 45px;
+  height: 48px;
+  left: 14px;
+  bottom: 4px;
   background: white;
 }
 
-.settings-button {
+.game-area {
   position: absolute;
-  top: 10px;
-  right: 30px;
-  width: 54px;
-  height: 54px;
-  border-radius: 50%;
-  border: none;
-  font-size: 28px;
-  cursor: pointer;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding-bottom: 40px;
+}
+
+.piano-container {
+  position: relative;
+  width: 1260px;
+  height: 320px;
+}
+
+.key {
+  position: absolute;
+  border-radius:
+    0 0 12px 12px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  font-size: 12px;
+  font-weight: bold;
+  user-select: none;
+}
+
+.white {
+  height: 320px;
   background:
-    rgba(255,255,255,0.12);
+    linear-gradient(
+      to bottom,
+      #ffffff,
+      #cfcfcf
+    );
+  border: 2px solid #111;
+  color: black;
+  z-index: 1;
+}
+
+.black {
+  height: 200px;
+  background:
+    linear-gradient(
+      to bottom,
+      #2b2b2b,
+      #000
+    );
+  border: 2px solid #000;
   color: white;
+  z-index: 2;
+}
+
+.key span {
+  margin-bottom: 12px;
+}
+
+.player {
+  position: absolute;
+  width: 74px;
+  height: 74px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  z-index: 50;
+  transition:
+    left 0.05s linear,
+    bottom 0.05s linear,
+    transform 0.05s linear;
+  filter:
+    drop-shadow(
+      0 0 12px rgba(0,255,255,0.35)
+    );
+}
+
+.music-particle {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background:
+    rgba(255,255,255,0.9);
+  z-index: 40;
+}
+
+.discoveries-container {
+  position: absolute;
+  right: 25px;
+  top: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  z-index: 150;
+}
+
+.discovery-button {
+  border: none;
+  padding:
+    14px 20px;
+  border-radius: 16px;
+  cursor: pointer;
+  color: white;
+  background:
+    rgba(0,255,255,0.15);
   backdrop-filter: blur(10px);
+  transition: 0.2s;
+}
+
+.discovery-button:hover {
+  transform: scale(1.05);
 }
 
 .modal-overlay {
@@ -183,95 +302,49 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;
+  z-index: 9999;
 }
 
 .modal-card {
   position: relative;
-  width: 500px;
-  padding: 30px;
-  border-radius: 24px;
+  width: 540px;
+  padding: 32px;
+  border-radius: 28px;
   background:
-    rgba(20,20,30,0.95);
-  color: white;
+    rgba(12,16,30,0.96);
   backdrop-filter: blur(20px);
+  color: white;
+}
+
+.modal-card h2 {
+  margin-top: 0;
+  font-size: 2rem;
+}
+
+.modal-card p {
+  line-height: 1.7;
+  opacity: 0.85;
 }
 
 .close-button {
   position: absolute;
-  top: 15px;
-  right: 15px;
+  top: 18px;
+  right: 18px;
   border: none;
   background: transparent;
   color: white;
-  font-size: 24px;
   cursor: pointer;
+  font-size: 1.5rem;
 }
 
 .toggle-button {
   width: 100%;
-  margin-top: 15px;
+  margin-top: 18px;
   padding: 14px;
-  border-radius: 12px;
-  border: none;
-  background:
-    rgba(255,255,255,0.1);
-  color: white;
-  cursor: pointer;
-}
-
-.discoveries-container {
-  position: absolute;
-  top: 240px;
-  right: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  z-index: 30;
-}
-
-.discovery-button {
-  padding: 12px 20px;
   border: none;
   border-radius: 14px;
-  background:
-    rgba(0,255,255,0.15);
-  color: white;
   cursor: pointer;
-  backdrop-filter: blur(10px);
-}
-
-.game-area {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
-.rain-layer {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-}
-
-.rain-drop {
-  position: absolute;
-  top: -120px;
-  width: 2px;
-  height: 120px;
+  color: white;
   background:
-    linear-gradient(
-      transparent,
-      rgba(255,255,255,0.7)
-    );
-  animation:
-    rainFall linear infinite;
-}
-
-@keyframes rainFall {
-  to {
-    transform:
-      translateY(120vh);
-  }
+    rgba(255,255,255,0.08);
 }
