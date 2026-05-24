@@ -1,47 +1,41 @@
 import * as Tone from "tone";
 
-const synth = new Tone.PolySynth(
-  Tone.Synth,
-  {
-    oscillator: {
-      type: "triangle",
-    },
+let audioEnabled = true;
 
-    envelope: {
-      attack: 0.001,
-      decay: 0.03,
-      sustain: 0,
-      release: 0.015,
-    },
-  }
-).toDestination();
-
-function transposeOctave(
-  note: string
+export function setAudioEnabledState(
+  value: boolean
 ) {
-  const match =
-    note.match(
-      /^([A-G][b#]?)(\d)$/
-    );
-
-  if (!match) return note;
-
-  const [, pitch, octave] = match;
-
-  return `${pitch}${
-    Number(octave) + 1
-  }`;
+  audioEnabled = value;
 }
+
+const synth =
+  new Tone.PolySynth(
+    Tone.Synth,
+    {
+      oscillator: {
+        type: "triangle",
+      },
+
+      envelope: {
+        attack: 0.001,
+        decay: 0.04,
+        sustain: 0,
+        release: 0.02,
+      },
+    }
+  ).toDestination();
 
 export async function playNote(
   note: string
 ) {
+  if (!audioEnabled) {
+    return;
+  }
+
   await Tone.start();
 
-  const higherNote = transposeOctave(note);
-
   synth.triggerAttackRelease(
-    higherNote,
-    "96n"
+    note,
+    "64n"
   );
 }

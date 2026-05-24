@@ -1,7 +1,19 @@
-import {useCallback, useEffect, useMemo, useRef, useState,} from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+
+import {
+  AnimatePresence,
+  motion,
+} from "framer-motion";
+
 import Player from "./components/Player";
 import Piano from "./components/Piano";
+
 import { useKeyboard } from "./hooks/useKeyboard";
 import { playNote } from "./audio/piano";
 import { pianoKeys } from "./data/pianoKeys";
@@ -23,32 +35,46 @@ interface Particle {
   driftX: number;
 }
 
-const NOTE_TO_STAFF: Record<string, number> = {
-  C4: 74,
-  Db4: 71,
-  D4: 68,
-  Eb4: 65,
-  E4: 62,
-  F4: 59,
-  Gb4: 56,
-  G4: 53,
-  Ab4: 50,
-  A4: 47,
-  Bb4: 44,
-  B4: 41,
+const NOTE_TO_STAFF: Record<
+  string,
+  number
+> = {
+  C4: 128,
+  Db4: 123,
+  D4: 118,
+  Eb4: 113,
+  E4: 108,
+  F4: 103,
+  Gb4: 98,
+  G4: 93,
+  Ab4: 88,
+  A4: 83,
+  Bb4: 78,
+  B4: 73,
 
-  C5: 38,
-  Db5: 35,
-  D5: 32,
-  Eb5: 29,
-  E5: 26,
-  F5: 23,
-  Gb5: 20,
-  G5: 17,
-  Ab5: 14,
-  A5: 11,
-  Bb5: 8,
-  B5: 5,
+  C5: 68,
+  Db5: 63,
+  D5: 58,
+  Eb5: 53,
+  E5: 48,
+  F5: 43,
+  Gb5: 38,
+  G5: 33,
+  Ab5: 28,
+  A5: 23,
+  Bb5: 18,
+  B5: 13,
+};
+
+const PORTFOLIO_CONTENT = {
+  "Sobre mí":
+    "Desarrollador enfocado en crear experiencias interactivas mezclando videojuegos, música y diseño frontend.",
+
+  Skills:
+    "React, TypeScript, Haskell, Docker, animaciones, diseño UX/UI, audio interactivo y desarrollo de interfaces modernas.",
+
+  Proyectos:
+    "Sistemas interactivos, videojuegos musicales, aplicaciones frontend avanzadas y proyectos creativos con animaciones.",
 };
 
 const DISCOVERY_PATTERNS = [
@@ -56,33 +82,81 @@ const DISCOVERY_PATTERNS = [
     name: "Sobre mí",
     sequence: ["C4", "E4", "G4"],
   },
+
   {
     name: "Skills",
     sequence: ["D4", "F4", "A4"],
   },
+
   {
     name: "Proyectos",
-    sequence: ["C4", "D4", "G4", "A4"],
+    sequence: [
+      "C4",
+      "D4",
+      "G4",
+      "A4",
+    ],
   },
 ];
 
 export default function App() {
   const keys = useKeyboard();
-  const pianoRef = useRef<HTMLDivElement>(null);
-  const [pianoWidth, setPianoWidth] = useState(1260);
+
+  const pianoRef =
+    useRef<HTMLDivElement>(null);
+
+  const [pianoWidth, setPianoWidth] =
+    useState(1260);
+
   const [x, setX] = useState(120);
-  const [velocityY, setVelocityY] = useState(0);
-  const [isJumping, setIsJumping] = useState(false);
-  const [direction, setDirection] = useState<"left" | "right">("right");
-  const [lane, setLane] = useState<"white" | "black">("white");
-  const [activeNote, setActiveNote] = useState<string | null>(null);
-  const [playedNotes, setPlayedNotes] = useState<PlayedNote[]>([]);
-  const [particles, setParticles] = useState<Particle[]>(([]));
-  const [discoveredSections, setDiscoveredSections] = useState<string[]>([]);
-  const [openedSection, setOpenedSection] = useState<string | null>(null);
-  const [showSettings, setShowSettings] = useState(false);
-  const [rainEnabled, setRainEnabled] = useState(true);
-  const [audioEnabled, setAudioEnabled] = useState(true);
+
+  const [velocityY, setVelocityY] =
+    useState(0);
+
+  const [isJumping, setIsJumping] =
+    useState(false);
+
+  const [direction, setDirection] =
+    useState<"left" | "right">(
+      "right"
+    );
+
+  const [lane, setLane] = useState<
+    "white" | "black"
+  >("white");
+
+  const [activeNote, setActiveNote] =
+    useState<string | null>(null);
+
+  const [playedNotes, setPlayedNotes] =
+    useState<PlayedNote[]>([]);
+
+  const [particles, setParticles] =
+    useState<Particle[]>([]);
+
+  const [
+    discoveredSections,
+    setDiscoveredSections,
+  ] = useState<string[]>([]);
+
+  const [
+    openedSection,
+    setOpenedSection,
+  ] = useState<string | null>(null);
+
+  const [
+    showSettings,
+    setShowSettings,
+  ] = useState(false);
+
+  const [rainEnabled, setRainEnabled] =
+    useState(true);
+
+  const [
+    audioEnabled,
+    setAudioEnabled,
+  ] = useState(true);
+
   const noteIdRef = useRef(0);
 
   useEffect(() => {
@@ -93,6 +167,7 @@ export default function App() {
         );
       }
     };
+
     updateSize();
 
     window.addEventListener(
@@ -109,39 +184,48 @@ export default function App() {
   }, []);
 
   const rainDrops = useMemo(() => {
-    return Array.from({ length: 60 }).map(
-      (_, i) => ({
-        id: i,
-        left: `${(i * 13) % 100}%`,
-        delay: `${(i % 7) * 0.2}s`,
-        duration: `${
-          0.8 + ((i * 17) % 10) * 0.08
-        }s`,
-      })
-    );
+    return Array.from({
+      length: 60,
+    }).map((_, i) => ({
+      id: i,
+      left: `${(i * 13) % 100}%`,
+      delay: `${(i % 7) * 0.2}s`,
+      duration: `${
+        0.8 +
+        ((i * 17) % 10) * 0.08
+      }s`,
+    }));
   }, []);
 
-  const getPressedKey = useCallback(() => {
-    const playerCenter = x + PLAYER_WIDTH / 2;
+  const getPressedKey =
+    useCallback(() => {
+      const playerCenter =
+        x + PLAYER_WIDTH / 2;
 
-    return pianoKeys.find((key) => {
-      const keyStart = (key.x / 1260) * pianoWidth;
-      const keyEnd = ((key.x + key.width) / 1260) * pianoWidth;
+      return pianoKeys.find((key) => {
+        const keyStart =
+          (key.x / 1260) * pianoWidth;
 
-      return (
-        key.type === lane &&
-        playerCenter >= keyStart &&
-        playerCenter <= keyEnd
-      );
-    });
-  }, [x, pianoWidth, lane]);
+        const keyEnd =
+          ((key.x + key.width) /
+            1260) *
+          pianoWidth;
+
+        return (
+          key.type === lane &&
+          playerCenter >= keyStart &&
+          playerCenter <= keyEnd
+        );
+      });
+    }, [x, pianoWidth, lane]);
 
   const triggerNote = useCallback(
     async (note: string) => {
       setActiveNote(note);
-      if (audioEnabled) {
-        await playNote(note);
-      }
+
+      if (!audioEnabled) return;
+
+      await playNote(note);
 
       setPlayedNotes((prev) => [
         ...prev,
@@ -151,23 +235,27 @@ export default function App() {
         },
       ]);
 
-      const particleBaseX = x + PLAYER_WIDTH / 2;
+      const particleBaseX =
+        x + PLAYER_WIDTH / 2;
 
-      const newParticles = Array.from({
-        length: 8,
-      }).map((_, i) => ({
-        id:
-          Date.now() +
-          i +
-          Math.random(),
-        x: particleBaseX,
-        y:
-          lane === "black"
-            ? 320
-            : 420,
-        driftX:
-          (i - 4) * 18,
-      }));
+      const newParticles =
+        Array.from({
+          length: 8,
+        }).map((_, i) => ({
+          id:
+            Date.now() +
+            i +
+            Math.random(),
+
+          x: particleBaseX,
+
+          y:
+            lane === "black"
+              ? 320
+              : 420,
+
+          driftX: (i - 4) * 18,
+        }));
 
       setParticles((prev) => [
         ...prev,
@@ -179,65 +267,56 @@ export default function App() {
           prev.filter(
             (p) =>
               !newParticles.some(
-                (np) => np.id === p.id
+                (np) =>
+                  np.id === p.id
               )
           )
         );
       }, 900);
+
       setTimeout(() => {
         setActiveNote(null);
       }, 55);
     },
-    [lane, x]
+    [lane, x, audioEnabled]
   );
 
-  const checkMelody = useCallback(() => {
-    const sequence = playedNotes.map(
-      (n) => n.note
-    );
-
-    for (const pattern of DISCOVERY_PATTERNS) {
-      const target =
-        pattern.sequence.join("-");
-
-      const current =
-        sequence.join("-");
-
-      if (
-        current.includes(target)
-      ) {
-        setDiscoveredSections(
-          (prev) => {
-            if (
-              prev.includes(
-                pattern.name
-              )
-            ) {
-              return prev;
-            }
-
-            return [
-              ...prev,
-              pattern.name,
-            ];
-          }
+  const checkMelody =
+    useCallback(() => {
+      const sequence =
+        playedNotes.map(
+          (n) => n.note
         );
-      }
-    }
 
-    sequence.forEach(
-      (note, index) => {
-        setTimeout(() => {
-          if (audioEnabled) {
-            playNote(note);
-          }
-        }, index * 100);
+      for (const pattern of DISCOVERY_PATTERNS) {
+        const target =
+          pattern.sequence.join("-");
+
+        const current =
+          sequence.join("-");
+
+        if (
+          current.includes(target)
+        ) {
+          setDiscoveredSections(
+            (prev) => {
+              if (
+                prev.includes(
+                  pattern.name
+                )
+              ) {
+                return prev;
+              }
+
+              return [
+                ...prev,
+                pattern.name,
+              ];
+            }
+          );
+        }
       }
-    );
-  }, [
-    playedNotes,
-    audioEnabled,
-  ]);
+    }, [playedNotes]);
 
   const deleteLastNote =
     useCallback(() => {
@@ -272,15 +351,11 @@ export default function App() {
           );
         });
 
-        if (
-          keys["ArrowUp"]
-        ) {
+        if (keys["ArrowUp"]) {
           setLane("black");
         }
 
-        if (
-          keys["ArrowDown"]
-        ) {
+        if (keys["ArrowDown"]) {
           setLane("white");
         }
 
@@ -309,26 +384,24 @@ export default function App() {
         if (!isJumping) return;
 
         setVelocityY((prev) => {
-          const next =
-            prev - GRAVITY;
-
-          return next;
+          return prev - GRAVITY;
         });
-
-        setX((prev) => prev);
 
         if (
           velocityY <=
           -JUMP_FORCE
         ) {
           setIsJumping(false);
-          const pressedKey = getPressedKey();
+
+          const pressedKey =
+            getPressedKey();
 
           if (pressedKey) {
             triggerNote(
               pressedKey.note
             );
           }
+
           setVelocityY(0);
         }
       }, 16);
@@ -348,9 +421,7 @@ export default function App() {
     const keyDown = (
       e: KeyboardEvent
     ) => {
-      if (
-        e.code === "Enter"
-      ) {
+      if (e.code === "Enter") {
         checkMelody();
       }
 
@@ -381,11 +452,13 @@ export default function App() {
   const playerY =
     (lane === "black"
       ? 355
-      : 230) + velocityY * 4;
+      : 230) +
+    velocityY * 4;
 
   return (
     <div className="scene">
       <div className="background-glow" />
+
       <div className="dream-overlay" />
 
       {rainEnabled && (
@@ -408,15 +481,52 @@ export default function App() {
         </div>
       )}
 
+      <aside className="sidebar">
+        <div className="sidebar-logo">
+          ♪
+        </div>
+
+        <div className="sidebar-menu">
+          {DISCOVERY_PATTERNS.map(
+            (item) => {
+              const unlocked =
+                discoveredSections.includes(
+                  item.name
+                );
+
+              return (
+                <button
+                  key={item.name}
+                  disabled={!unlocked}
+                  className={`sidebar-button ${
+                    unlocked
+                      ? "unlocked"
+                      : "locked"
+                  }`}
+                  onClick={() =>
+                    setOpenedSection(
+                      item.name
+                    )
+                  }
+                >
+                  {item.name}
+                </button>
+              );
+            }
+          )}
+
+          <button
+            className="sidebar-button settings"
+            onClick={() =>
+              setShowSettings(true)
+            }
+          >
+            Configuración
+          </button>
+        </div>
+      </aside>
+
       <div className="top-ui">
-        <button
-          className="settings-button"
-          onClick={() =>
-            setShowSettings(true)
-          }
-        >
-          ⚙
-        </button>
         <motion.h1
           initial={{
             opacity: 0,
@@ -425,9 +535,6 @@ export default function App() {
           animate={{
             opacity: 1,
             y: 0,
-          }}
-          transition={{
-            duration: 1.2,
           }}
         >
           PLAY TO DISCOVER
@@ -440,72 +547,66 @@ export default function App() {
           animate={{
             opacity: 0.7,
           }}
-          transition={{
-            delay: 0.5,
-          }}
         >
           ← → Move
           &nbsp;&nbsp;
           SPACE Jump
           &nbsp;&nbsp;
-          ENTER Play Melody
-          &nbsp;&nbsp;
-          DELETE Undo
+          ENTER Check Melody
         </motion.p>
 
         <div className="sheet-wrapper">
-          <div className="sheet-scroll">
-            <div className="sheet-music">
-              <div className="treble-clef">
-                𝄞
-              </div>
+          <div className="sheet-music">
+            {[0, 1, 2, 3, 4].map(
+              (line) => (
+                <div
+                  key={line}
+                  className="staff-line"
+                  style={{
+                    top: `${
+                      45 +
+                      line * 24
+                    }px`,
+                  }}
+                />
+              )
+            )}
 
-              {[0, 1, 2, 3, 4].map(
-                (line) => (
-                  <div
-                    key={line}
-                    className="staff-line"
-                    style={{
-                      top: `${
-                        40 +
-                        line * 24
-                      }px`,
-                    }}
-                  />
-                )
-              )}
-
-              {playedNotes.map(
-                (
-                  note,
-                  index
-                ) => (
-                  <motion.div
-                    key={note.id}
-                    className="music-note"
-                    initial={{
-                      opacity: 0,
-                      y: -20,
-                    }}
-                    animate={{
-                      opacity: 1,
-                      y: NOTE_TO_STAFF[
-                        note.note
-                      ],
-                    }}
-                    style={{
-                      left: `${
-                        120 +
-                        index * 52
-                      }px`,
-                    }}
-                  >
-                    <div className="note-head" />
-                    <div className="note-stick" />
-                  </motion.div>
-                )
-              )}
+            <div className="treble-clef">
+              𝄞
             </div>
+
+            {playedNotes.map(
+              (note, index) => (
+                <motion.div
+                  key={note.id}
+                  className="music-note"
+                  initial={{
+                    opacity: 0,
+                    scale: 0,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    scale: 1,
+                  }}
+                  style={{
+                    left: `${
+                      150 +
+                      index * 60
+                    }px`,
+                    top: `${
+                      NOTE_TO_STAFF[
+                        note.note
+                      ]
+                    }px`,
+                  }}
+                >
+                  <div className="note-head" />
+
+                  <div className="note-stick" />
+                </motion.div>
+              )
+            )}
           </div>
         </div>
       </div>
@@ -543,12 +644,8 @@ export default function App() {
                     particle.x +
                     particle.driftX,
                 }}
-                exit={{
-                  opacity: 0,
-                }}
                 transition={{
                   duration: 0.8,
-                  ease: "easeOut",
                 }}
               />
             )
@@ -558,181 +655,153 @@ export default function App() {
         <Piano
           activeNote={activeNote}
         />
+      </div>
 
-        <div className="discoveries-container">
-          {discoveredSections.map(
-            (section) => (
+      <AnimatePresence>
+        {openedSection && (
+          <motion.div
+            className="modal-overlay"
+            initial={{
+              opacity: 0,
+            }}
+            animate={{
+              opacity: 1,
+            }}
+            exit={{
+              opacity: 0,
+            }}
+          >
+            <motion.div
+              className="modal-card"
+              initial={{
+                scale: 0.8,
+                opacity: 0,
+              }}
+              animate={{
+                scale: 1,
+                opacity: 1,
+              }}
+              exit={{
+                scale: 0.8,
+                opacity: 0,
+              }}
+            >
               <button
-                key={section}
-                className="discovery-button"
+                className="close-button"
                 onClick={() =>
                   setOpenedSection(
-                    section
+                    null
                   )
                 }
               >
-                {section}
+                ✕
               </button>
-            )
-          )}
-        </div>
 
-        <AnimatePresence>
-          {openedSection && (
+              <h2>
+                {openedSection}
+              </h2>
+
+              <p>
+                {
+                  PORTFOLIO_CONTENT[
+                    openedSection as keyof typeof PORTFOLIO_CONTENT
+                  ]
+                }
+              </p>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showSettings && (
+          <motion.div
+            className="modal-overlay"
+            initial={{
+              opacity: 0,
+            }}
+            animate={{
+              opacity: 1,
+            }}
+            exit={{
+              opacity: 0,
+            }}
+          >
             <motion.div
-              className="modal-overlay"
+              className="modal-card"
               initial={{
+                scale: 0.8,
                 opacity: 0,
               }}
               animate={{
+                scale: 1,
                 opacity: 1,
               }}
               exit={{
+                scale: 0.8,
                 opacity: 0,
               }}
             >
-              <motion.div
-                className="modal-card"
-                initial={{
-                  scale: 0.8,
-                  opacity: 0,
-                }}
-                animate={{
-                  scale: 1,
-                  opacity: 1,
-                }}
-                exit={{
-                  scale: 0.8,
-                  opacity: 0,
-                }}
+              <button
+                className="close-button"
+                onClick={() =>
+                  setShowSettings(false)
+                }
               >
-                <button
-                  className="close-button"
-                  onClick={() =>
-                    setOpenedSection(
-                      null
-                    )
-                  }
-                >
-                  ✕
-                </button>
+                ✕
+              </button>
 
-                <h2>
-                  {openedSection}
-                </h2>
+              <h2>
+                Configuración
+              </h2>
 
-                <p>
-                  {openedSection ===
-                    "Sobre mí" &&
-                    "Desarrollador creativo enfocado en experiencias interactivas y música."}
+              <p>
+                ← → Movimiento
+              </p>
 
-                  {openedSection ===
-                    "Skills" &&
-                    "React, TypeScript, Haskell, Docker, UX/UI, animaciones y audio interactivo."}
+              <p>
+                SPACE Saltar
+              </p>
 
-                  {openedSection ===
-                    "Proyectos" &&
-                    "Sistemas interactivos, videojuegos musicales, aplicaciones web y diseño frontend."}
-                </p>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              <p>
+                ENTER Revisar
+                melodía
+              </p>
 
-        <AnimatePresence>
-          {showSettings && (
-            <motion.div
-              className="modal-overlay"
-              initial={{
-                opacity: 0,
-              }}
-              animate={{
-                opacity: 1,
-              }}
-              exit={{
-                opacity: 0,
-              }}
-            >
-              <motion.div
-                className="modal-card"
-                initial={{
-                  scale: 0.8,
-                  opacity: 0,
-                }}
-                animate={{
-                  scale: 1,
-                  opacity: 1,
-                }}
-                exit={{
-                  scale: 0.8,
-                  opacity: 0,
-                }}
+              <button
+                className="toggle-button"
+                onClick={() =>
+                  setRainEnabled(
+                    !rainEnabled
+                  )
+                }
               >
-                <button
-                  className="close-button"
-                  onClick={() =>
-                    setShowSettings(false)
-                  }
-                >
-                  ✕
-                </button>
+                Lluvia:
+                {" "}
+                {rainEnabled
+                  ? "ON"
+                  : "OFF"}
+              </button>
 
-                <h2>
-                  Configuración
-                </h2>
-
-                <p>
-                  ← → Movimiento
-                </p>
-
-                <p>
-                  SPACE Saltar
-                </p>
-
-                <p>
-                  ENTER Reproducir
-                  melodía
-                </p>
-
-                <p>
-                  DELETE Eliminar
-                  última nota
-                </p>
-
-                <button
-                  className="toggle-button"
-                  onClick={() =>
-                    setRainEnabled(
-                      !rainEnabled
-                    )
-                  }
-                >
-                  Lluvia:
-                  {" "}
-                  {rainEnabled
-                    ? "ON"
-                    : "OFF"}
-                </button>
-
-                <button
-                  className="toggle-button"
-                  onClick={() =>
-                    setAudioEnabled(
-                      !audioEnabled
-                    )
-                  }
-                >
-                  Audio:
-                  {" "}
-                  {audioEnabled
-                    ? "ON"
-                    : "OFF"}
-                </button>
-              </motion.div>
+              <button
+                className="toggle-button"
+                onClick={() =>
+                  setAudioEnabled(
+                    (prev) =>
+                      !prev
+                  )
+                }
+              >
+                Audio:
+                {" "}
+                {audioEnabled
+                  ? "ON"
+                  : "OFF"}
+              </button>
             </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

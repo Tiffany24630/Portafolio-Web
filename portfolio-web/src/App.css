@@ -5,9 +5,7 @@
 body {
   margin: 0;
   overflow: hidden;
-  font-family:
-    Inter,
-    sans-serif;
+  font-family: Inter, sans-serif;
   background: #020617;
 }
 
@@ -16,6 +14,7 @@ body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+
   background:
     radial-gradient(
       circle at top,
@@ -24,46 +23,52 @@ body {
     );
 }
 
+/* =========================
+   BACKGROUND
+========================= */
+
 .background-glow {
   position: absolute;
   inset: 0;
+
   background:
     radial-gradient(
       circle,
       rgba(0,255,255,0.12),
       transparent 70%
     );
-  pointer-events: none;
 }
 
 .dream-overlay {
   position: absolute;
   inset: 0;
+
   background:
     linear-gradient(
       to bottom,
-      rgba(255,255,255,0.02),
+      rgba(255,255,255,0.03),
       transparent
     );
-  pointer-events: none;
 }
 
 .rain-layer {
   position: absolute;
   inset: 0;
-  overflow: hidden;
 }
 
 .rain-drop {
   position: absolute;
   top: -120px;
+
   width: 1px;
   height: 140px;
+
   background:
     linear-gradient(
       transparent,
       rgba(255,255,255,0.5)
     );
+
   animation:
     rainFall linear infinite;
 }
@@ -75,91 +80,214 @@ body {
   }
 }
 
+/* =========================
+   SIDEBAR
+========================= */
+
+.sidebar {
+  position: fixed;
+  left: 24px;
+  top: 24px;
+
+  width: 240px;
+  height: calc(100vh - 48px);
+
+  z-index: 500;
+
+  border-radius: 30px;
+
+  background:
+    rgba(10,15,28,0.82);
+
+  border:
+    1px solid rgba(255,255,255,0.08);
+
+  backdrop-filter: blur(20px);
+
+  padding: 28px 18px;
+
+  display: flex;
+  flex-direction: column;
+
+  box-shadow:
+    0 0 40px rgba(0,0,0,0.45);
+}
+
+.sidebar-logo {
+  color: white;
+
+  font-size: 3rem;
+
+  margin-bottom: 40px;
+
+  text-align: center;
+
+  text-shadow:
+    0 0 20px rgba(255,255,255,0.5);
+}
+
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.sidebar-button {
+  border: none;
+
+  padding: 16px 18px;
+
+  border-radius: 18px;
+
+  text-align: left;
+
+  font-size: 1rem;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: 0.25s ease;
+
+  backdrop-filter: blur(10px);
+}
+
+.sidebar-button:hover {
+  transform: translateX(6px);
+}
+
+.sidebar-button.unlocked {
+  background:
+    rgba(0,255,255,0.14);
+
+  color: white;
+
+  border:
+    1px solid rgba(0,255,255,0.22);
+}
+
+.sidebar-button.locked {
+  background:
+    rgba(255,255,255,0.04);
+
+  color:
+    rgba(255,255,255,0.3);
+
+  cursor: not-allowed;
+}
+
+.sidebar-button.settings {
+  margin-top: auto;
+
+  background:
+    rgba(255,255,255,0.08);
+
+  color: white;
+}
+
+/* =========================
+   TOP UI
+========================= */
+
 .top-ui {
   position: absolute;
+
   top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 100;
+  left: 280px;
+
+  width:
+    calc(100% - 280px);
+
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 40px;
+
+  padding-top: 36px;
+
+  z-index: 100;
 }
 
 .top-ui h1 {
   margin: 0;
+
   color: white;
-  font-size: 6rem;
+
+  font-size:
+    clamp(3rem, 5vw, 6rem);
+
   font-weight: 900;
-  letter-spacing: 10px;
+
+  letter-spacing: 12px;
+
   text-shadow:
-    0 0 30px rgba(255,255,255,0.4);
+    0 0 30px rgba(255,255,255,0.35);
 }
 
 .top-ui p {
   margin-top: 20px;
+
   color:
-    rgba(255,255,255,0.55);
-  letter-spacing: 6px;
+    rgba(255,255,255,0.65);
+
+  letter-spacing: 3px;
+
   font-size: 1rem;
 }
 
-.settings-button {
-  position: absolute;
-  top: 30px;
-  right: 30px;
-  width: 54px;
-  height: 54px;
-  border: none;
-  border-radius: 50%;
-  cursor: pointer;
-  background:
-    rgba(255,255,255,0.12);
-  color: white;
-  font-size: 1.5rem;
-  backdrop-filter: blur(10px);
-  z-index: 200;
-}
+/* =========================
+   SHEET MUSIC
+========================= */
 
 .sheet-wrapper {
-  width: 900px;
-  margin-top: 35px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  border-radius: 24px;
-  background:
-    rgba(255,255,255,0.08);
-  backdrop-filter: blur(14px);
-  padding: 20px;
-}
+  width: min(980px, 75vw);
 
-.sheet-scroll {
-  overflow-x: auto;
+  margin-top: 34px;
+
+  padding: 26px;
+
+  border-radius: 30px;
+
+  background:
+    rgba(255,255,255,0.06);
+
+  border:
+    1px solid rgba(255,255,255,0.08);
+
+  backdrop-filter: blur(18px);
+
+  box-shadow:
+    0 0 40px rgba(0,0,0,0.35);
 }
 
 .sheet-music {
   position: relative;
-  width: 2200px;
+
+  width: 100%;
   height: 180px;
 }
 
 .staff-line {
   position: absolute;
-  left: 120px;
-  width: calc(100% - 140px);
+
+  left: 110px;
+  right: 30px;
+
   height: 2px;
+
   background:
-    rgba(255,255,255,0.45);
+    rgba(255,255,255,0.35);
 }
 
 .treble-clef {
   position: absolute;
-  left: 25px;
+
+  left: 28px;
   top: -10px;
-  font-size: 8rem;
+
+  font-size: 7rem;
+
   color: white;
-  line-height: 1;
+
+  opacity: 0.95;
 }
 
 .music-note {
@@ -169,70 +297,111 @@ body {
 .note-head {
   width: 18px;
   height: 14px;
+
   background: white;
+
   border-radius: 50%;
+
+  box-shadow:
+    0 0 14px rgba(255,255,255,0.4);
 }
 
 .note-stick {
   position: absolute;
+
   width: 3px;
-  height: 48px;
+  height: 52px;
+
+  background: white;
+
   left: 14px;
   bottom: 4px;
-  background: white;
 }
+
+/* =========================
+   GAME AREA
+========================= */
 
 .game-area {
   position: absolute;
+
   bottom: 0;
-  width: 100%;
+  left: 280px;
+
+  width:
+    calc(100% - 280px);
+
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  padding-bottom: 40px;
+
+  padding-bottom: 30px;
 }
+
+/* =========================
+   PIANO
+========================= */
 
 .piano-container {
   position: relative;
-  width: 1260px;
-  height: 320px;
+
+  width: min(1100px, 82vw);
+  height: 260px;
 }
 
 .key {
   position: absolute;
+
   border-radius:
-    0 0 12px 12px;
+    0 0 14px 14px;
+
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  font-size: 12px;
+
+  font-size: 11px;
   font-weight: bold;
-  user-select: none;
+
+  transition: 0.12s ease;
+}
+
+.key:hover {
+  transform: translateY(2px);
 }
 
 .white {
-  height: 320px;
+  height: 260px;
+
   background:
     linear-gradient(
       to bottom,
       #ffffff,
-      #cfcfcf
+      #d6d6d6
     );
-  border: 2px solid #111;
+
+  border:
+    2px solid #111;
+
   color: black;
+
   z-index: 1;
 }
 
 .black {
-  height: 200px;
+  height: 160px;
+
   background:
     linear-gradient(
       to bottom,
-      #2b2b2b,
+      #2f2f2f,
       #000
     );
-  border: 2px solid #000;
+
+  border:
+    2px solid #000;
+
   color: white;
+
   z-index: 2;
 }
 
@@ -240,111 +409,183 @@ body {
   margin-bottom: 12px;
 }
 
+/* =========================
+   PLAYER
+========================= */
+
 .player {
   position: absolute;
-  width: 74px;
-  height: 74px;
+
+  width: 52px;
+  height: 52px;
+
   object-fit: contain;
+
   image-rendering: pixelated;
+
   z-index: 50;
-  transition:
-    left 0.05s linear,
-    bottom 0.05s linear,
-    transform 0.05s linear;
+
   filter:
     drop-shadow(
-      0 0 12px rgba(0,255,255,0.35)
+      0 0 10px rgba(0,255,255,0.35)
     );
+
+  transition:
+    left 0.05s linear,
+    bottom 0.05s linear;
 }
+
+/* =========================
+   PARTICLES
+========================= */
 
 .music-particle {
   position: absolute;
+
   width: 10px;
   height: 10px;
+
   border-radius: 50%;
+
   background:
     rgba(255,255,255,0.9);
+
   z-index: 40;
 }
 
-.discoveries-container {
-  position: absolute;
-  right: 25px;
-  top: 180px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  z-index: 150;
-}
-
-.discovery-button {
-  border: none;
-  padding:
-    14px 20px;
-  border-radius: 16px;
-  cursor: pointer;
-  color: white;
-  background:
-    rgba(0,255,255,0.15);
-  backdrop-filter: blur(10px);
-  transition: 0.2s;
-}
-
-.discovery-button:hover {
-  transform: scale(1.05);
-}
+/* =========================
+   MODAL
+========================= */
 
 .modal-overlay {
   position: fixed;
   inset: 0;
+
   background:
-    rgba(0,0,0,0.7);
+    rgba(0,0,0,0.72);
+
   display: flex;
   justify-content: center;
   align-items: center;
+
   z-index: 9999;
 }
 
 .modal-card {
   position: relative;
-  width: 540px;
-  padding: 32px;
-  border-radius: 28px;
+
+  width: 560px;
+
+  padding: 34px;
+
+  border-radius: 30px;
+
   background:
     rgba(12,16,30,0.96);
-  backdrop-filter: blur(20px);
+
   color: white;
+
+  border:
+    1px solid rgba(255,255,255,0.08);
+
+  backdrop-filter: blur(20px);
+
+  box-shadow:
+    0 0 50px rgba(0,0,0,0.5);
 }
 
 .modal-card h2 {
   margin-top: 0;
+
   font-size: 2rem;
 }
 
 .modal-card p {
-  line-height: 1.7;
-  opacity: 0.85;
+  line-height: 1.8;
+
+  opacity: 0.88;
 }
 
 .close-button {
   position: absolute;
+
   top: 18px;
   right: 18px;
+
+  width: 42px;
+  height: 42px;
+
   border: none;
-  background: transparent;
-  color: white;
+  border-radius: 12px;
+
   cursor: pointer;
-  font-size: 1.5rem;
+
+  background:
+    rgba(255,255,255,0.08);
+
+  color: white;
+
+  font-size: 1.1rem;
 }
 
 .toggle-button {
   width: 100%;
-  margin-top: 18px;
-  padding: 14px;
+
+  margin-top: 16px;
+
+  padding: 16px;
+
   border: none;
   border-radius: 14px;
+
   cursor: pointer;
-  color: white;
+
   background:
     rgba(255,255,255,0.08);
+
+  color: white;
+
+  font-size: 1rem;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 1200px) {
+  .sidebar {
+    width: 200px;
+  }
+
+  .top-ui {
+    left: 230px;
+    width:
+      calc(100% - 230px);
+  }
+
+  .game-area {
+    left: 230px;
+    width:
+      calc(100% - 230px);
+  }
+
+  .top-ui h1 {
+    font-size: 4rem;
+  }
+}
+
+@media (max-width: 900px) {
+  .sidebar {
+    display: none;
+  }
+
+  .top-ui,
+  .game-area {
+    left: 0;
+    width: 100%;
+  }
+
+  .sheet-wrapper {
+    width: 92vw;
+  }
 }
