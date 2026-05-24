@@ -135,7 +135,7 @@ body {
   left: 0;
   width: 238px;
   height: 100vh;
-  padding: 48px 16px 22px;
+  padding: 34px 16px 20px;
   display: flex;
   flex-direction: column;
   background: rgba(1, 8, 15, 0.72);
@@ -149,11 +149,11 @@ body {
 }
 
 .sidebar-logo {
-  height: 96px;
+  height: 78px;
   display: grid;
   place-items: center;
   color: #2ffcff;
-  font-size: 72px;
+  font-size: 62px;
   line-height: 1;
   text-shadow:
     0 0 14px rgba(47, 252, 255, 0.9),
@@ -161,15 +161,35 @@ body {
 }
 
 .sidebar-menu {
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  margin-top: 24px;
+  gap: 10px;
+  margin-top: 18px;
+  padding-right: 5px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(47, 252, 255, 0.62) rgba(255, 255, 255, 0.06);
+}
+
+.sidebar-menu::-webkit-scrollbar {
+  width: 7px;
+}
+
+.sidebar-menu::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.sidebar-menu::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(47, 252, 255, 0.58);
 }
 
 .sidebar-button {
   width: 100%;
-  min-height: 82px;
+  min-height: 70px;
   padding: 0 14px 0 18px;
   display: grid;
   grid-template-columns: 32px 1fr 18px;
@@ -180,7 +200,7 @@ body {
   background: rgba(12, 22, 35, 0.78);
   color: rgba(244, 251, 255, 0.78);
   font: inherit;
-  font-size: 17px;
+  font-size: 16px;
   text-align: left;
   cursor: pointer;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
@@ -233,7 +253,7 @@ body {
 .sidebar-divider {
   width: 82%;
   height: 1px;
-  margin: 28px auto 26px;
+  margin: 16px auto 14px;
   background: linear-gradient(90deg, transparent, rgba(156, 184, 205, 0.52), transparent);
 }
 
@@ -324,25 +344,33 @@ body {
 .nav-icon.contact::before {
   position: absolute;
   left: 2px;
-  top: 7px;
+  top: 6px;
   width: 26px;
-  height: 17px;
+  height: 19px;
   content: "";
   border: 2px solid currentColor;
-  border-radius: 3px;
+  border-radius: 4px;
+  background:
+    linear-gradient(34deg, transparent 47%, currentColor 49%, currentColor 53%, transparent 55%),
+    linear-gradient(-34deg, transparent 47%, currentColor 49%, currentColor 53%, transparent 55%);
+  background-position: center 0;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
 }
 
 .nav-icon.contact::after {
   position: absolute;
-  left: 6px;
-  top: 9px;
-  width: 18px;
-  height: 18px;
+  left: 4px;
+  top: 8px;
+  width: 22px;
+  height: 12px;
   content: "";
-  border-left: 2px solid currentColor;
+  border-right: 2px solid currentColor;
   border-bottom: 2px solid currentColor;
-  transform: rotate(-45deg);
-  transform-origin: center;
+  border-left: 2px solid currentColor;
+  transform: skewY(-28deg);
+  transform-origin: top center;
+  opacity: 0.9;
 }
 
 .nav-icon.gear::before {

@@ -23,7 +23,15 @@ const NOTE_SPACING = 72;
 const MEASURE_START_X = 112;
 const SHEET_MIN_WIDTH = 1120;
 
-type SectionName = "Sobre mi" | "Skills" | "Proyectos" | "Contacto";
+type SectionName =
+  | "Sobre mi"
+  | "Skills"
+  | "Proyecto 01"
+  | "Proyecto 02"
+  | "Proyecto 03"
+  | "Proyecto 04"
+  | "Proyecto 05"
+  | "Contacto";
 
 interface PlayedNote {
   id: number;
@@ -69,7 +77,8 @@ const LETTER_INDEX: Record<string, number> = {
   B: 6,
 };
 
-const MIDDLE_LINE_Y = STAFF_BOTTOM - (LETTER_INDEX.B - LETTER_INDEX.E) * STAFF_STEP;
+const MIDDLE_LINE_Y =
+  STAFF_BOTTOM - (LETTER_INDEX.B - LETTER_INDEX.E) * STAFF_STEP;
 
 const PORTFOLIO_CONTENT: Record<SectionName, SectionContent> = {
   "Sobre mi": {
@@ -82,10 +91,30 @@ const PORTFOLIO_CONTENT: Record<SectionName, SectionContent> = {
       "Trabajo con herramientas modernas para construir interfaces fluidas, tipadas y faciles de mantener.",
     highlights: ["React", "TypeScript", "Docker", "Framer Motion", "Tone.js", "UX/UI"],
   },
-  Proyectos: {
+  "Proyecto 01": {
     lead:
-      "Proyectos orientados a interaccion, animacion y pequenos mundos web con personalidad propia.",
-    highlights: ["Videojuegos musicales", "Portafolios experimentales", "Sistemas frontend"],
+      "Un mundo musical interactivo donde cada tecla modifica el escenario y desbloquea fragmentos visuales.",
+    highlights: ["Gameplay musical", "Partitura viva", "Feedback audiovisual"],
+  },
+  "Proyecto 02": {
+    lead:
+      "Dashboard creativo para organizar piezas visuales, ideas y referencias con una interfaz rapida y clara.",
+    highlights: ["UI productiva", "Filtros dinamicos", "Microinteracciones"],
+  },
+  "Proyecto 03": {
+    lead:
+      "Experiencia tipo arcade web enfocada en movimiento fluido, estados reactivos y progresion por niveles.",
+    highlights: ["Controles suaves", "Sistema de niveles", "Animaciones con ritmo"],
+  },
+  "Proyecto 04": {
+    lead:
+      "Landing cinematica con atmosfera dreamcore, capas visuales, lluvia, profundidad y transiciones suaves.",
+    highlights: ["Direccion visual", "Escena inmersiva", "Responsive design"],
+  },
+  "Proyecto 05": {
+    lead:
+      "Sistema frontend modular pensado para crecer con componentes reutilizables, tipado y pruebas automatizadas.",
+    highlights: ["Arquitectura React", "TypeScript", "Testing"],
   },
   Contacto: {
     lead:
@@ -111,8 +140,28 @@ const DISCOVERY_PATTERNS: DiscoveryPattern[] = [
     icon: "star",
   },
   {
-    name: "Proyectos",
+    name: "Proyecto 01",
     sequence: ["C4", "D4", "G4", "A4"],
+    icon: "folder",
+  },
+  {
+    name: "Proyecto 02",
+    sequence: ["Db4", "F4", "Ab4"],
+    icon: "folder",
+  },
+  {
+    name: "Proyecto 03",
+    sequence: ["E4", "G4", "B4"],
+    icon: "folder",
+  },
+  {
+    name: "Proyecto 04",
+    sequence: ["F4", "Ab4", "C5"],
+    icon: "folder",
+  },
+  {
+    name: "Proyecto 05",
+    sequence: ["G4", "B4", "D5"],
     icon: "folder",
   },
   {
@@ -365,6 +414,7 @@ export default function App() {
         setVelocityY(JUMP_FORCE);
       }
     }, 16);
+
     return () => {
       window.clearInterval(movementInterval);
     };
@@ -384,8 +434,10 @@ export default function App() {
           if (pressedKey) {
             triggerNote(pressedKey.note);
           }
+
           return 0;
         }
+
         return next;
       });
     }, 16);
@@ -485,6 +537,7 @@ export default function App() {
             );
           })}
         </div>
+
         <div className="sidebar-divider" />
 
         <button className="sidebar-button settings" onClick={() => setShowSettings(true)}>
@@ -557,7 +610,7 @@ export default function App() {
                   >
                     {staffNote.hasFlat && (
                       <span className="accidental" aria-hidden="true">
-                        &flat;
+                        &#9837;
                       </span>
                     )}
 
@@ -570,6 +623,7 @@ export default function App() {
                         }}
                       />
                     ))}
+
                     <div className="note-head" />
                     <div className="note-stick" />
                   </motion.div>
@@ -582,6 +636,7 @@ export default function App() {
         <section className="game-area" aria-label="Piano interactivo">
           <div className="play-stage" ref={stageRef}>
             <Player x={x} y={playerY} direction={direction} isJumping={isJumping} />
+
             <AnimatePresence>
               {particles.map((particle) => (
                 <motion.div
@@ -603,6 +658,7 @@ export default function App() {
                 />
               ))}
             </AnimatePresence>
+
             <Piano activeNote={activeNote} />
           </div>
         </section>
