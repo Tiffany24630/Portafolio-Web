@@ -30,7 +30,7 @@ export function useGameEngine(
   onUpdate?: (deltaTime: number) => void
 ): [GameEngineState, GameEngineActions, PerformanceMetrics] {
   const [state, setState] = useState<GameEngineState>({
-    isRunning: false,
+    isRunning: true,
     currentPhase: 'intro',
     deltaTime: 0,
     frameRate: 0,
@@ -49,7 +49,8 @@ export function useGameEngine(
   const frameTimeHistoryRef = useRef<number[]>([]);
   const totalFramesRef = useRef<number>(0);
   const droppedFramesRef = useRef<number>(0);
-  const isRunningRef = useRef<boolean>(false);
+  const isRunningRef = useRef<boolean>(true);
+  const gameLoopRef = useRef<(currentTime: number) => void>(() => {});
 
   const gameLoop = useCallback((currentTime: number) => {
     if (!isRunningRef.current) {
@@ -101,16 +102,23 @@ export function useGameEngine(
     lastTimeRef.current = currentTime;
 
     if (isRunningRef.current) {
-      animationFrameRef.current = requestAnimationFrame(gameLoop);
+      animationFrameRef.current = requestAnimationFrame(gameLoopRef.current);
     }
   }, [onUpdate]);
+
+  useEffect(() => {
+    gameLoopRef.current = gameLoop;
+  }, [gameLoop]);
 
   const start = useCallback(() => {
     isRunningRef.current = true;
     setState(prev => ({ ...prev, isRunning: true }));
     lastTimeRef.current = 0;
-    animationFrameRef.current = requestAnimationFrame(gameLoop);
-  }, [gameLoop]);
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+    }
+    animationFrameRef.current = requestAnimationFrame(gameLoopRef.current);
+  }, []);
 
   const pause = useCallback(() => {
     isRunningRef.current = false;
@@ -124,14 +132,19 @@ export function useGameEngine(
     isRunningRef.current = true;
     setState(prev => ({ ...prev, isRunning: true }));
     lastTimeRef.current = 0; 
-    animationFrameRef.current = requestAnimationFrame(gameLoop);
-  }, [gameLoop]);
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+    }
+    animationFrameRef.current = requestAnimationFrame(gameLoopRef.current);
+  }, []);
 
   const setPhase = useCallback((phase: GameEngineState['currentPhase']) => {
     setState(prev => ({ ...prev, currentPhase: phase }));
   }, []);
 
   useEffect(() => {
+    animationFrameRef.current = requestAnimationFrame(gameLoopRef.current);
+
     return () => {
       isRunningRef.current = false;
       if (animationFrameRef.current) {
@@ -139,11 +152,6 @@ export function useGameEngine(
       }
     };
   }, []);
-
-  useEffect(() => {
-    start();
-    return () => pause();
-  }, [start, pause]);
 
   return [
     state,

@@ -17,7 +17,7 @@ export default function PianoKey({
 }: Props) {
   return (
     <motion.div
-      className={`key ${type}`}
+      className={`key ${type} ${active ? "active" : ""}`}
       animate={{
         y: active ? 8 : 0,
         scale: active ? 0.98 : 1,
@@ -31,8 +31,8 @@ export default function PianoKey({
         duration: 0.08,
       }}
       style={{
-        left: `${x}px`,
-        width: `${width}px`,
+        left: `${(x / 1260) * 100}%`,
+        width: `${(width / 1260) * 100}%`,
       }}
     >
       <span>{note}</span>
