@@ -1,16 +1,47 @@
-import { renderHook, act } from '@testing-library/react';
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { useGameEngine, getPerformanceGrade, shouldReduceQuality } from './useGameEngine';
+import { renderHook, act } from "@testing-library/react";
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  afterEach,
+  vi,
+} from "vitest";
 
-(globalThis as any).requestAnimationFrame = vi.fn((callback) => {
-  return setTimeout(() => callback(Date.now()), 16);
-});
+import {
+  useGameEngine,
+  getPerformanceGrade,
+  shouldReduceQuality,
+} from "./useGameEngine";
 
-(globalThis as any).cancelAnimationFrame = vi.fn((id) => {
-  clearTimeout(id);
-});
+declare global {
+  interface Window {
+    requestAnimationFrame: (
+      callback: FrameRequestCallback
+    ) => number;
 
-describe('useGameEngine', () => {
+    cancelAnimationFrame: (
+      id: number
+    ) => void;
+  }
+}
+
+globalThis.requestAnimationFrame = vi.fn(
+  (callback: FrameRequestCallback) => {
+    return window.setTimeout(
+      () => callback(Date.now()),
+      16
+    );
+  }
+);
+
+globalThis.cancelAnimationFrame = vi.fn(
+  (id: number) => {
+    clearTimeout(id);
+  }
+);
+
+describe("useGameEngine", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.clearAllTimers();
@@ -21,202 +52,273 @@ describe('useGameEngine', () => {
     vi.useRealTimers();
   });
 
-  it('should initialize with correct default state', () => {
-    const { result } = renderHook(() => useGameEngine());
+  it("should initialize with correct default state", () => {
+    const { result } = renderHook(() =>
+      useGameEngine()
+    );
+
     const [state] = result.current;
 
-    expect(state.isRunning).toBe(true); // Auto-starts
-    expect(state.currentPhase).toBe('intro');
+    expect(state.isRunning).toBe(true);
+
+    expect(state.currentPhase).toBe(
+      "intro"
+    );
+
     expect(state.deltaTime).toBe(0);
+
     expect(state.frameRate).toBe(0);
+
     expect(state.lastFrameTime).toBe(0);
   });
 
-  it('should start and stop the game engine', () => {
-    const { result } = renderHook(() => useGameEngine());
+  it("should start and stop the game engine", () => {
+    const { result } = renderHook(() =>
+      useGameEngine()
+    );
+
     const [, actions] = result.current;
 
     act(() => {
       actions.pause();
     });
 
-    expect(result.current[0].isRunning).toBe(false);
+    expect(
+      result.current[0].isRunning
+    ).toBe(false);
 
     act(() => {
       actions.start();
     });
 
-    expect(result.current[0].isRunning).toBe(true);
+    expect(
+      result.current[0].isRunning
+    ).toBe(true);
   });
 
-  it('should change game phases correctly', () => {
-    const { result } = renderHook(() => useGameEngine());
+  it("should change game phases correctly", () => {
+    const { result } = renderHook(() =>
+      useGameEngine()
+    );
+
     const [, actions] = result.current;
 
     act(() => {
-      actions.setPhase('playing');
+      actions.setPhase("playing");
     });
 
-    expect(result.current[0].currentPhase).toBe('playing');
+    expect(
+      result.current[0].currentPhase
+    ).toBe("playing");
 
     act(() => {
-      actions.setPhase('transitioning');
+      actions.setPhase("transitioning");
     });
 
-    expect(result.current[0].currentPhase).toBe('transitioning');
+    expect(
+      result.current[0].currentPhase
+    ).toBe("transitioning");
   });
 
-  it('should call onUpdate callback when provided', () => {
+  it("should call onUpdate callback when provided", () => {
     const mockOnUpdate = vi.fn();
-    renderHook(() => useGameEngine(mockOnUpdate));
+
+    renderHook(() =>
+      useGameEngine(mockOnUpdate)
+    );
 
     act(() => {
       vi.advanceTimersByTime(16);
     });
 
     expect(mockOnUpdate).toHaveBeenCalled();
-    expect(mockOnUpdate).toHaveBeenCalledWith(expect.any(Number));
+
+    expect(mockOnUpdate).toHaveBeenCalledWith(
+      expect.any(Number)
+    );
   });
 
-  it('should track performance metrics', () => {
-    const { result } = renderHook(() => useGameEngine());
+  it("should track performance metrics", () => {
+    const { result } = renderHook(() =>
+      useGameEngine()
+    );
+
     const [, , metrics] = result.current;
 
-    expect(metrics.averageFrameRate).toBe(0);
-    expect(metrics.frameTimeHistory).toEqual([]);
+    expect(
+      metrics.averageFrameRate
+    ).toBe(0);
+
+    expect(
+      metrics.frameTimeHistory
+    ).toEqual([]);
+
     expect(metrics.droppedFrames).toBe(0);
+
     expect(metrics.totalFrames).toBe(0);
   });
 
-  it('should resume from pause correctly', () => {
-    const { result } = renderHook(() => useGameEngine());
+  it("should resume from pause correctly", () => {
+    const { result } = renderHook(() =>
+      useGameEngine()
+    );
+
     const [, actions] = result.current;
 
     act(() => {
       actions.pause();
     });
 
-    expect(result.current[0].isRunning).toBe(false);
+    expect(
+      result.current[0].isRunning
+    ).toBe(false);
 
     act(() => {
       actions.resume();
     });
 
-    expect(result.current[0].isRunning).toBe(true);
+    expect(
+      result.current[0].isRunning
+    ).toBe(true);
   });
 
-  it('should handle cleanup on unmount', () => {
-    const cancelSpy = vi.spyOn(globalThis as any, 'cancelAnimationFrame');
-    const { unmount } = renderHook(() => useGameEngine());
-    
+  it("should handle cleanup on unmount", () => {
+    const cancelSpy = vi.spyOn(
+      globalThis,
+      "cancelAnimationFrame"
+    );
+
+    const { unmount } = renderHook(() =>
+      useGameEngine()
+    );
+
     unmount();
 
     expect(cancelSpy).toHaveBeenCalled();
+
     cancelSpy.mockRestore();
   });
 });
 
-describe('Performance utilities', () => {
-  describe('getPerformanceGrade', () => {
-    it('should return excellent for high performance', () => {
+describe("Performance utilities", () => {
+  describe("getPerformanceGrade", () => {
+    it("should return excellent for high performance", () => {
       const metrics = {
         averageFrameRate: 60,
         frameTimeHistory: [],
         droppedFrames: 1,
-        totalFrames: 1000
+        totalFrames: 1000,
       };
 
-      expect(getPerformanceGrade(metrics)).toBe('excellent');
+      expect(
+        getPerformanceGrade(metrics)
+      ).toBe("excellent");
     });
 
-    it('should return good for decent performance', () => {
+    it("should return good for decent performance", () => {
       const metrics = {
         averageFrameRate: 55,
         frameTimeHistory: [],
         droppedFrames: 30,
-        totalFrames: 1000
+        totalFrames: 1000,
       };
 
-      expect(getPerformanceGrade(metrics)).toBe('good');
+      expect(
+        getPerformanceGrade(metrics)
+      ).toBe("good");
     });
 
-    it('should return fair for mediocre performance', () => {
+    it("should return fair for mediocre performance", () => {
       const metrics = {
         averageFrameRate: 45,
         frameTimeHistory: [],
         droppedFrames: 80,
-        totalFrames: 1000
+        totalFrames: 1000,
       };
 
-      expect(getPerformanceGrade(metrics)).toBe('fair');
+      expect(
+        getPerformanceGrade(metrics)
+      ).toBe("fair");
     });
 
-    it('should return poor for bad performance', () => {
+    it("should return poor for bad performance", () => {
       const metrics = {
         averageFrameRate: 30,
         frameTimeHistory: [],
         droppedFrames: 200,
-        totalFrames: 1000
+        totalFrames: 1000,
       };
 
-      expect(getPerformanceGrade(metrics)).toBe('poor');
+      expect(
+        getPerformanceGrade(metrics)
+      ).toBe("poor");
     });
 
-    it('should handle zero total frames', () => {
+    it("should handle zero total frames", () => {
       const metrics = {
         averageFrameRate: 60,
         frameTimeHistory: [],
         droppedFrames: 0,
-        totalFrames: 0
+        totalFrames: 0,
       };
 
-      expect(getPerformanceGrade(metrics)).toBe('excellent');
+      expect(
+        getPerformanceGrade(metrics)
+      ).toBe("excellent");
     });
   });
 
-  describe('shouldReduceQuality', () => {
-    it('should return false for excellent performance', () => {
+  describe("shouldReduceQuality", () => {
+    it("should return false for excellent performance", () => {
       const metrics = {
         averageFrameRate: 60,
         frameTimeHistory: [],
         droppedFrames: 1,
-        totalFrames: 1000
+        totalFrames: 1000,
       };
 
-      expect(shouldReduceQuality(metrics)).toBe(false);
+      expect(
+        shouldReduceQuality(metrics)
+      ).toBe(false);
     });
 
-    it('should return false for good performance', () => {
+    it("should return false for good performance", () => {
       const metrics = {
         averageFrameRate: 55,
         frameTimeHistory: [],
         droppedFrames: 30,
-        totalFrames: 1000
+        totalFrames: 1000,
       };
 
-      expect(shouldReduceQuality(metrics)).toBe(false);
+      expect(
+        shouldReduceQuality(metrics)
+      ).toBe(false);
     });
 
-    it('should return true for fair performance', () => {
+    it("should return true for fair performance", () => {
       const metrics = {
         averageFrameRate: 45,
         frameTimeHistory: [],
         droppedFrames: 80,
-        totalFrames: 1000
+        totalFrames: 1000,
       };
 
-      expect(shouldReduceQuality(metrics)).toBe(true);
+      expect(
+        shouldReduceQuality(metrics)
+      ).toBe(true);
     });
 
-    it('should return true for poor performance', () => {
+    it("should return true for poor performance", () => {
       const metrics = {
         averageFrameRate: 30,
         frameTimeHistory: [],
         droppedFrames: 200,
-        totalFrames: 1000
+        totalFrames: 1000,
       };
 
-      expect(shouldReduceQuality(metrics)).toBe(true);
+      expect(
+        shouldReduceQuality(metrics)
+      ).toBe(true);
     });
   });
 });

@@ -1,20 +1,26 @@
-import playerImg from "../assets/player.png";
+import idlePlayer from "../assets/player.png";
+import jumpPlayer from "../assets/jumpPlayer.png";
 
 interface Props {
   x: number;
   y: number;
   direction: "left" | "right";
+  isJumping: boolean;
 }
 
 export default function Player({
   x,
   y,
   direction,
+  isJumping,
 }: Props) {
-
   return (
     <img
-      src={playerImg}
+      src={
+        isJumping
+          ? jumpPlayer
+          : idlePlayer
+      }
       alt="player"
       className="player"
       style={{

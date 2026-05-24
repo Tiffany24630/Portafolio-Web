@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
 export interface Vector2D {
   x: number;
@@ -42,7 +42,13 @@ const DEFAULT_CONFIG: PhysicsConfig = {
 export function usePhysics(
   config: Partial<PhysicsConfig> = {}
 ): [PhysicsState, PhysicsActions] {
-  const finalConfig = { ...DEFAULT_CONFIG, ...config };
+  const finalConfig = useMemo(
+    () => ({
+      ...DEFAULT_CONFIG,
+      ...config,
+    }),
+    [config]
+  );
   
   const [state, setState] = useState<PhysicsState>({
     position: { x: 0, y: 0 },

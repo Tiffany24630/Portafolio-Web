@@ -174,6 +174,72 @@ body {
   overflow: hidden;
 }
 
+.notes-scroll {
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  display: flex;
+  align-items: center;
+  padding-left: 100px;
+}
+
+.notes-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+
+.notes-scroll::-webkit-scrollbar-thumb {
+  background:
+    rgba(255,255,255,0.2);
+  border-radius: 999px;
+}
+
+.treble-clef {
+  position: absolute;
+  left: 28px;
+  font-size: 6rem;
+  color:
+    rgba(255,255,255,0.82);
+  z-index: 10;
+}
+
+.sheet-note-wrapper {
+  position: relative;
+  min-width: 80px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.sheet-note-real {
+  position: absolute;
+  width: 22px;
+  height: 16px;
+  border-radius: 50%;
+  background:
+    var(--cyan);
+  box-shadow:
+    0 0 18px rgba(125,249,255,0.7);
+}
+
+.note-stem {
+  position: absolute;
+  top: 20px;
+  width: 2px;
+  height: 80px;
+  background:
+    rgba(255,255,255,0.8);
+  left: 44px;
+}
+
+.sheet-note-label {
+  position: absolute;
+  bottom: 8px;
+  font-size: 12px;
+  color:
+    rgba(255,255,255,0.5);
+}
+
 .sheet-note {
   min-width: fit-content;
   padding:
@@ -330,7 +396,15 @@ body {
   margin-bottom: 12px;
   font-size: 10px;
   letter-spacing: 0.15rem;
-  opacity: 0.45;
+  opacity: 0.7;
+}
+
+.white span {
+  color: black;
+}
+
+.black span {
+  color: white;
 }
 
 .player {
