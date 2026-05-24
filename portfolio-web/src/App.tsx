@@ -78,7 +78,11 @@ export default function App() {
   const [activeNote, setActiveNote] = useState<string | null>(null);
   const [playedNotes, setPlayedNotes] = useState<PlayedNote[]>([]);
   const [particles, setParticles] = useState<Particle[]>(([]));
-  const [discoveredSection, setDiscoveredSection] = useState<string | null>(null);
+  const [discoveredSections, setDiscoveredSections] = useState<string[]>([]);
+  const [openedSection, setOpenedSection] = useState<string | null>(null);
+  const [showSettings, setShowSettings] = useState(false);
+  const [rainEnabled, setRainEnabled] = useState(true);
+  const [audioEnabled, setAudioEnabled] = useState(true);
   const noteIdRef = useRef(0);
 
   useEffect(() => {
@@ -135,7 +139,9 @@ export default function App() {
   const triggerNote = useCallback(
     async (note: string) => {
       setActiveNote(note);
-      await playNote(note);
+      if (audioEnabled) {
+        await playNote(note);
+      }
 
       setPlayedNotes((prev) => [
         ...prev,
@@ -191,14 +197,30 @@ export default function App() {
     );
 
     for (const pattern of DISCOVERY_PATTERNS) {
-      const target = pattern.sequence.join("-");
-      const current = sequence.join("-");
+      const target =
+        pattern.sequence.join("-");
+
+      const current =
+        sequence.join("-");
 
       if (
         current.includes(target)
       ) {
-        setDiscoveredSection(
-          pattern.name
+        setDiscoveredSections(
+          (prev) => {
+            if (
+              prev.includes(
+                pattern.name
+              )
+            ) {
+              return prev;
+            }
+
+            return [
+              ...prev,
+              pattern.name,
+            ];
+          }
         );
       }
     }
@@ -206,11 +228,16 @@ export default function App() {
     sequence.forEach(
       (note, index) => {
         setTimeout(() => {
-          playNote(note);
-        }, index * 120);
+          if (audioEnabled) {
+            playNote(note);
+          }
+        }, index * 100);
       }
     );
-  }, [playedNotes]);
+  }, [
+    playedNotes,
+    audioEnabled,
+  ]);
 
   const deleteLastNote =
     useCallback(() => {
@@ -361,25 +388,35 @@ export default function App() {
       <div className="background-glow" />
       <div className="dream-overlay" />
 
-      <div className="rain-layer">
-        {rainDrops.map(
-          (drop) => (
-            <div
-              key={drop.id}
-              className="rain-drop"
-              style={{
-                left: drop.left,
-                animationDelay:
-                  drop.delay,
-                animationDuration:
-                  drop.duration,
-              }}
-            />
-          )
-        )}
-      </div>
+      {rainEnabled && (
+        <div className="rain-layer">
+          {rainDrops.map(
+            (drop) => (
+              <div
+                key={drop.id}
+                className="rain-drop"
+                style={{
+                  left: drop.left,
+                  animationDelay:
+                    drop.delay,
+                  animationDuration:
+                    drop.duration,
+                }}
+              />
+            )
+          )}
+        </div>
+      )}
 
       <div className="top-ui">
+        <button
+          className="settings-button"
+          onClick={() =>
+            setShowSettings(true)
+          }
+        >
+          ⚙
+        </button>
         <motion.h1
           initial={{
             opacity: 0,
@@ -522,30 +559,176 @@ export default function App() {
           activeNote={activeNote}
         />
 
+        <div className="discoveries-container">
+          {discoveredSections.map(
+            (section) => (
+              <button
+                key={section}
+                className="discovery-button"
+                onClick={() =>
+                  setOpenedSection(
+                    section
+                  )
+                }
+              >
+                {section}
+              </button>
+            )
+          )}
+        </div>
+
         <AnimatePresence>
-          {discoveredSection && (
+          {openedSection && (
             <motion.div
-              className="discovery-panel"
+              className="modal-overlay"
               initial={{
                 opacity: 0,
-                y: 40,
               }}
               animate={{
                 opacity: 1,
-                y: 0,
               }}
               exit={{
                 opacity: 0,
               }}
             >
-              <h2>
-                {discoveredSection}
-              </h2>
+              <motion.div
+                className="modal-card"
+                initial={{
+                  scale: 0.8,
+                  opacity: 0,
+                }}
+                animate={{
+                  scale: 1,
+                  opacity: 1,
+                }}
+                exit={{
+                  scale: 0.8,
+                  opacity: 0,
+                }}
+              >
+                <button
+                  className="close-button"
+                  onClick={() =>
+                    setOpenedSection(
+                      null
+                    )
+                  }
+                >
+                  ✕
+                </button>
 
-              <p>
-                Melody
-                discovered
-              </p>
+                <h2>
+                  {openedSection}
+                </h2>
+
+                <p>
+                  {openedSection ===
+                    "Sobre mí" &&
+                    "Desarrollador creativo enfocado en experiencias interactivas y música."}
+
+                  {openedSection ===
+                    "Skills" &&
+                    "React, TypeScript, Haskell, Docker, UX/UI, animaciones y audio interactivo."}
+
+                  {openedSection ===
+                    "Proyectos" &&
+                    "Sistemas interactivos, videojuegos musicales, aplicaciones web y diseño frontend."}
+                </p>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {showSettings && (
+            <motion.div
+              className="modal-overlay"
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+              }}
+              exit={{
+                opacity: 0,
+              }}
+            >
+              <motion.div
+                className="modal-card"
+                initial={{
+                  scale: 0.8,
+                  opacity: 0,
+                }}
+                animate={{
+                  scale: 1,
+                  opacity: 1,
+                }}
+                exit={{
+                  scale: 0.8,
+                  opacity: 0,
+                }}
+              >
+                <button
+                  className="close-button"
+                  onClick={() =>
+                    setShowSettings(false)
+                  }
+                >
+                  ✕
+                </button>
+
+                <h2>
+                  Configuración
+                </h2>
+
+                <p>
+                  ← → Movimiento
+                </p>
+
+                <p>
+                  SPACE Saltar
+                </p>
+
+                <p>
+                  ENTER Reproducir
+                  melodía
+                </p>
+
+                <p>
+                  DELETE Eliminar
+                  última nota
+                </p>
+
+                <button
+                  className="toggle-button"
+                  onClick={() =>
+                    setRainEnabled(
+                      !rainEnabled
+                    )
+                  }
+                >
+                  Lluvia:
+                  {" "}
+                  {rainEnabled
+                    ? "ON"
+                    : "OFF"}
+                </button>
+
+                <button
+                  className="toggle-button"
+                  onClick={() =>
+                    setAudioEnabled(
+                      !audioEnabled
+                    )
+                  }
+                >
+                  Audio:
+                  {" "}
+                  {audioEnabled
+                    ? "ON"
+                    : "OFF"}
+                </button>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
