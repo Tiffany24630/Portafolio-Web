@@ -16,7 +16,6 @@ body {
     Inter,
     system-ui,
     sans-serif;
-
   background:
     radial-gradient(
       circle at top,
@@ -24,6 +23,5 @@ body {
       #070b12 45%,
       #020203 100%
     );
-
   color: white;
 }

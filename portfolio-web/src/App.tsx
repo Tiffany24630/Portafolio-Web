@@ -1,10 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-
 import "./App.css";
 import Player from "./components/Player";
 import Piano from "./components/Piano";
-
 import { playMelody, playNote } from "./audio/piano";
 import { pianoKeys } from "./data/pianoKeys";
 import { useKeyboard } from "./hooks/useKeyboard";
@@ -71,8 +69,7 @@ const LETTER_INDEX: Record<string, number> = {
   B: 6,
 };
 
-const MIDDLE_LINE_Y =
-  STAFF_BOTTOM - (LETTER_INDEX.B - LETTER_INDEX.E) * STAFF_STEP;
+const MIDDLE_LINE_Y = STAFF_BOTTOM - (LETTER_INDEX.B - LETTER_INDEX.E) * STAFF_STEP;
 
 const PORTFOLIO_CONTENT: Record<SectionName, SectionContent> = {
   "Sobre mi": {
@@ -368,7 +365,6 @@ export default function App() {
         setVelocityY(JUMP_FORCE);
       }
     }, 16);
-
     return () => {
       window.clearInterval(movementInterval);
     };
@@ -388,10 +384,8 @@ export default function App() {
           if (pressedKey) {
             triggerNote(pressedKey.note);
           }
-
           return 0;
         }
-
         return next;
       });
     }, 16);
@@ -491,7 +485,6 @@ export default function App() {
             );
           })}
         </div>
-
         <div className="sidebar-divider" />
 
         <button className="sidebar-button settings" onClick={() => setShowSettings(true)}>
@@ -577,7 +570,6 @@ export default function App() {
                         }}
                       />
                     ))}
-
                     <div className="note-head" />
                     <div className="note-stick" />
                   </motion.div>
@@ -590,7 +582,6 @@ export default function App() {
         <section className="game-area" aria-label="Piano interactivo">
           <div className="play-stage" ref={stageRef}>
             <Player x={x} y={playerY} direction={direction} isJumping={isJumping} />
-
             <AnimatePresence>
               {particles.map((particle) => (
                 <motion.div
@@ -612,7 +603,6 @@ export default function App() {
                 />
               ))}
             </AnimatePresence>
-
             <Piano activeNote={activeNote} />
           </div>
         </section>

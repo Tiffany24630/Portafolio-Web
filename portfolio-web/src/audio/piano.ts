@@ -48,7 +48,6 @@ export async function playMelody(
   }
 
   await Tone.start();
-
   const now = Tone.now();
 
   notes.forEach((note, index) => {

@@ -58,17 +58,10 @@ describe("useGameEngine", () => {
     );
 
     const [state] = result.current;
-
     expect(state.isRunning).toBe(true);
-
-    expect(state.currentPhase).toBe(
-      "intro"
-    );
-
+    expect(state.currentPhase).toBe("intro");
     expect(state.deltaTime).toBe(0);
-
     expect(state.frameRate).toBe(0);
-
     expect(state.lastFrameTime).toBe(0);
   });
 
@@ -83,17 +76,13 @@ describe("useGameEngine", () => {
       actions.pause();
     });
 
-    expect(
-      result.current[0].isRunning
-    ).toBe(false);
+    expect(result.current[0].isRunning).toBe(false);
 
     act(() => {
       actions.start();
     });
 
-    expect(
-      result.current[0].isRunning
-    ).toBe(true);
+    expect(result.current[0].isRunning).toBe(true);
   });
 
   it("should change game phases correctly", () => {
@@ -144,17 +133,9 @@ describe("useGameEngine", () => {
     );
 
     const [, , metrics] = result.current;
-
-    expect(
-      metrics.averageFrameRate
-    ).toBe(0);
-
-    expect(
-      metrics.frameTimeHistory
-    ).toEqual([]);
-
+    expect(metrics.averageFrameRate).toBe(0);
+    expect(metrics.frameTimeHistory).toEqual([]);
     expect(metrics.droppedFrames).toBe(0);
-
     expect(metrics.totalFrames).toBe(0);
   });
 
@@ -169,17 +150,13 @@ describe("useGameEngine", () => {
       actions.pause();
     });
 
-    expect(
-      result.current[0].isRunning
-    ).toBe(false);
+    expect(result.current[0].isRunning).toBe(false);
 
     act(() => {
       actions.resume();
     });
 
-    expect(
-      result.current[0].isRunning
-    ).toBe(true);
+    expect(result.current[0].isRunning).toBe(true);
   });
 
   it("should handle cleanup on unmount", () => {
@@ -193,9 +170,7 @@ describe("useGameEngine", () => {
     );
 
     unmount();
-
     expect(cancelSpy).toHaveBeenCalled();
-
     cancelSpy.mockRestore();
   });
 });
@@ -210,9 +185,7 @@ describe("Performance utilities", () => {
         totalFrames: 1000,
       };
 
-      expect(
-        getPerformanceGrade(metrics)
-      ).toBe("excellent");
+      expect(getPerformanceGrade(metrics)).toBe("excellent");
     });
 
     it("should return good for decent performance", () => {
@@ -223,9 +196,7 @@ describe("Performance utilities", () => {
         totalFrames: 1000,
       };
 
-      expect(
-        getPerformanceGrade(metrics)
-      ).toBe("good");
+      expect(getPerformanceGrade(metrics)).toBe("good");
     });
 
     it("should return fair for mediocre performance", () => {
@@ -236,9 +207,7 @@ describe("Performance utilities", () => {
         totalFrames: 1000,
       };
 
-      expect(
-        getPerformanceGrade(metrics)
-      ).toBe("fair");
+      expect(getPerformanceGrade(metrics)).toBe("fair");
     });
 
     it("should return poor for bad performance", () => {
@@ -249,9 +218,7 @@ describe("Performance utilities", () => {
         totalFrames: 1000,
       };
 
-      expect(
-        getPerformanceGrade(metrics)
-      ).toBe("poor");
+      expect(getPerformanceGrade(metrics)).toBe("poor");
     });
 
     it("should handle zero total frames", () => {
@@ -262,9 +229,7 @@ describe("Performance utilities", () => {
         totalFrames: 0,
       };
 
-      expect(
-        getPerformanceGrade(metrics)
-      ).toBe("excellent");
+      expect(getPerformanceGrade(metrics)).toBe("excellent");
     });
   });
 
@@ -277,9 +242,7 @@ describe("Performance utilities", () => {
         totalFrames: 1000,
       };
 
-      expect(
-        shouldReduceQuality(metrics)
-      ).toBe(false);
+      expect(shouldReduceQuality(metrics)).toBe(false);
     });
 
     it("should return false for good performance", () => {
@@ -290,9 +253,7 @@ describe("Performance utilities", () => {
         totalFrames: 1000,
       };
 
-      expect(
-        shouldReduceQuality(metrics)
-      ).toBe(false);
+      expect(shouldReduceQuality(metrics)).toBe(false);
     });
 
     it("should return true for fair performance", () => {
@@ -303,9 +264,7 @@ describe("Performance utilities", () => {
         totalFrames: 1000,
       };
 
-      expect(
-        shouldReduceQuality(metrics)
-      ).toBe(true);
+      expect(shouldReduceQuality(metrics)).toBe(true);
     });
 
     it("should return true for poor performance", () => {
@@ -316,9 +275,7 @@ describe("Performance utilities", () => {
         totalFrames: 1000,
       };
 
-      expect(
-        shouldReduceQuality(metrics)
-      ).toBe(true);
+      expect(shouldReduceQuality(metrics)).toBe(true);
     });
   });
 });

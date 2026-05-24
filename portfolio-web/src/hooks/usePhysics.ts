@@ -137,13 +137,10 @@ export function usePhysics(
         newState.isGrounded = true;
         newState.isJumping = false;
       }
-
       return newState;
     });
-
     inputForces.current = { x: 0, y: 0 };
   }, [finalConfig]);
-
   return [state, { applyForce, jump, setGrounded, reset, update }];
 }
 

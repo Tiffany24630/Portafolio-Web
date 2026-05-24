@@ -75,8 +75,7 @@ export function useGameEngine(
       droppedFramesRef.current++;
     }
 
-    const averageFrameTime = frameTimeHistoryRef.current.reduce((a, b) => a + b, 0) / 
-                            frameTimeHistoryRef.current.length;
+    const averageFrameTime = frameTimeHistoryRef.current.reduce((a, b) => a + b, 0) / frameTimeHistoryRef.current.length;
     const averageFrameRate = averageFrameTime > 0 ? 1000 / averageFrameTime : 0;
 
     setState(prev => ({
