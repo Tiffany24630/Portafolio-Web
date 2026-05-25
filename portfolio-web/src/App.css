@@ -133,7 +133,7 @@ body {
   z-index: 20;
   top: 0;
   left: 0;
-  width: 238px;
+  width: 286px;
   height: 100vh;
   padding: 34px 16px 20px;
   display: flex;
@@ -189,10 +189,10 @@ body {
 
 .sidebar-button {
   width: 100%;
-  min-height: 70px;
-  padding: 0 14px 0 18px;
+  min-height: 74px;
+  padding: 0 16px 0 18px;
   display: grid;
-  grid-template-columns: 32px 1fr 18px;
+  grid-template-columns: 34px minmax(0, 1fr) 18px;
   align-items: center;
   gap: 12px;
   border: 1px solid rgba(148, 178, 203, 0.22);
@@ -218,9 +218,8 @@ body {
 }
 
 .mission-title {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.15;
+  white-space: normal;
 }
 
 .mission-sequence {
@@ -228,6 +227,7 @@ body {
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.7px;
+  line-height: 1.25;
   text-transform: uppercase;
 }
 
@@ -414,7 +414,7 @@ body {
 .stage-shell {
   position: absolute;
   z-index: 5;
-  inset: 0 72px 0 284px;
+  inset: 0 72px 0 330px;
 }
 
 .top-ui {
@@ -905,11 +905,11 @@ body {
 
 @media (max-width: 1200px) {
   .sidebar {
-    width: 218px;
+    width: 260px;
   }
 
   .stage-shell {
-    inset: 0 36px 0 250px;
+    inset: 0 36px 0 300px;
   }
 
   .sheet-wrapper {

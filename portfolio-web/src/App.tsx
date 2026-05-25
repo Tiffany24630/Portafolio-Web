@@ -30,7 +30,7 @@ type SectionName =
   | "Proyecto 02"
   | "Proyecto 03"
   | "Proyecto 04"
-  | "Proyecto 05"
+  | "Portafolio"
   | "Contacto";
 
 interface PlayedNote {
@@ -83,47 +83,61 @@ const MIDDLE_LINE_Y =
 const PORTFOLIO_CONTENT: Record<SectionName, SectionContent> = {
   "Sobre mi": {
     lead:
-      "Desarrollador enfocado en crear experiencias interactivas mezclando videojuegos, musica y diseno frontend.",
-    highlights: ["UI interactiva", "Audio reactivo", "Experiencias web cinematicas"],
+      "Mi nombre es Tiffany Salazar y me dedico al desarrollo enfocado en crear experiencias interactivas mezclando diferentes tecnologías para el desarrollo de frontend buscando adquirir nuevos conocimientos conforme más progrese.",
+    highlights: ["UI interactiva", "Audio reactivo", "Experiencias web cinematicas", "Aprendizaje constante", "Videojuegos", "Tests"],
   },
   Skills: {
     lead:
-      "Trabajo con herramientas modernas para construir interfaces fluidas, tipadas y faciles de mantener.",
+      "Trabajo con herramientas modernas para construir interfaces fluidas, tipadas y faciles de mantener, además de la búsqueda de aprendizaje constante para el desarrollo de nuevas habilidades.",
     highlights: ["React", "TypeScript", "Docker", "Framer Motion", "Tone.js", "UX/UI"],
   },
   "Proyecto 01": {
     lead:
-      "Un mundo musical interactivo donde cada tecla modifica el escenario y desbloquea fragmentos visuales.",
-    highlights: ["Gameplay musical", "Partitura viva", "Feedback audiovisual"],
+      "Un juego de Snake que desafía la agilidad mental desarrollado como un reto en el cual se utiliza solamente React.",
+    highlights: ["React", "Videojuego", "Experiencia interactiva"],
+    links: [
+      {label: "Juego de Snake", href: "https://github.com/Tiffany24630/Lab7-Snake-con-React"}
+    ],
   },
   "Proyecto 02": {
     lead:
-      "Dashboard creativo para organizar piezas visuales, ideas y referencias con una interfaz rapida y clara.",
-    highlights: ["UI productiva", "Filtros dinamicos", "Microinteracciones"],
+      "Manejo de tests en proyecto para la parte de front-end.",
+    highlights: ["Tests", "Front-end"],
+    links: [
+      {label: "Tests", href: "https://github.com/Tiffany24630/Lab8--Password-Meter-"}
+    ],
   },
   "Proyecto 03": {
     lead:
-      "Experiencia tipo arcade web enfocada en movimiento fluido, estados reactivos y progresion por niveles.",
-    highlights: ["Controles suaves", "Sistema de niveles", "Animaciones con ritmo"],
+      "Desarrollo de una aplicación web con gatitos que muestra aleatoriamente imagen y descripción.",
+    highlights: ["Imagenes", "React"],
+    links: [
+      {label: "Gatitos", href: "https://github.com/Tiffany24630/App-de-gatitos"}
+    ],
   },
   "Proyecto 04": {
     lead:
-      "Landing cinematica con atmosfera dreamcore, capas visuales, lluvia, profundidad y transiciones suaves.",
-    highlights: ["Direccion visual", "Escena inmersiva", "Responsive design"],
+      "Desarrollo de una imagen (personaje) usando únicamente CSS.",
+    highlights: ["Diseños con CSS", "Front"],
+    links: [
+      {label: "CSS Kirby", href: "https://github.com/Tiffany24630/Lab-4-CSS-only/tree/main"}
+    ],
   },
-  "Proyecto 05": {
+  "Portafolio": {
     lead:
-      "Sistema frontend modular pensado para crecer con componentes reutilizables, tipado y pruebas automatizadas.",
-    highlights: ["Arquitectura React", "TypeScript", "Testing"],
+      "Este portafolio aplica tanto tests como uso de React y uso front.",
+    highlights: ["Arquitectura React", "Portafolio", "Testing"],
+    links: [
+      {label: "Portafolio", href: "https://github.com/Tiffany24630/Portafolio-Web"}
+    ],
   },
   Contacto: {
     lead:
-      "Espacio para conectar el portafolio con tus redes, correo y perfiles profesionales.",
+      "Información de contacto:",
     highlights: ["Disponible para colaborar", "Frontend creativo", "Experiencias interactivas"],
     links: [
-      { label: "GitHub", href: "https://github.com/" },
-      { label: "LinkedIn", href: "https://www.linkedin.com/" },
-      { label: "Email", href: "mailto:tucorreo@example.com" },
+      { label: "GitHub", href: "https://github.com/Tiffany24630" },
+      { label: "Email", href: "mailto:sal24630@uvg.edu.gt" },
     ],
   },
 };
@@ -131,42 +145,42 @@ const PORTFOLIO_CONTENT: Record<SectionName, SectionContent> = {
 const DISCOVERY_PATTERNS: DiscoveryPattern[] = [
   {
     name: "Sobre mi",
-    sequence: ["C4", "E4", "G4"],
+    sequence: ["Gb4", "D5", "E4"],
     icon: "profile",
   },
   {
     name: "Skills",
-    sequence: ["D4", "F4", "A4"],
+    sequence: ["Ab4", "C5", "Eb5"],
     icon: "star",
   },
   {
     name: "Proyecto 01",
-    sequence: ["C4", "D4", "G4", "A4"],
+    sequence: ["D4", "F4", "A4", "Bb4"],
     icon: "folder",
   },
   {
     name: "Proyecto 02",
-    sequence: ["Db4", "F4", "Ab4"],
+    sequence: ["Bb4", "Bb4", "Bb4", "A4", "G4"],
     icon: "folder",
   },
   {
     name: "Proyecto 03",
-    sequence: ["E4", "G4", "B4"],
+    sequence: ["E5", "Eb5", "E5", "Eb5", "E5", "B4"],
     icon: "folder",
   },
   {
     name: "Proyecto 04",
-    sequence: ["F4", "Ab4", "C5"],
+    sequence: ["D5", "C5", "A4", "C4", "E4", "A4", "B4"],
     icon: "folder",
   },
   {
-    name: "Proyecto 05",
-    sequence: ["G4", "B4", "D5"],
+    name: "Portafolio",
+    sequence: ["E4", "E5", "E4"],
     icon: "folder",
   },
   {
     name: "Contacto",
-    sequence: ["F4", "G4", "E4"],
+    sequence: ["C4", "E4", "G4"],
     icon: "contact",
   },
 ];
@@ -555,10 +569,11 @@ export default function App() {
           </motion.h1>
 
           <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <span>&larr; &rarr;</span> Move
-            <span>&uarr; &darr;</span> Black / White
-            <span>SPACE</span> Jump
-            <span>ENTER</span> Check Melody
+            <span>&larr; &rarr;</span> Moverse
+            <span>&uarr; &darr;</span> Negro / Blanco
+            <span>SPACE</span> Saltar
+            <span>ENTER</span> Reproducir Melodía
+            <span>DELETE</span> Eliminar última nota
           </motion.p>
 
           <div className="sheet-wrapper" ref={sheetScrollRef}>
